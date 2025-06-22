@@ -73,7 +73,7 @@ const Index = () => {
                   Kostenlose Erstberatung
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
-                <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-primary transition-all duration-300">
+                <Button size="lg" variant="outline" className="border-2 border-white text-law-blue-900 hover:bg-white hover:text-law-blue-900 transition-all duration-300">
                   +49 69 94321306
                 </Button>
               </div>
