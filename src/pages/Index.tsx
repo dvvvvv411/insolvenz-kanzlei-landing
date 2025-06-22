@@ -36,35 +36,35 @@ const Index = () => {
                     <Star key={star} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
                   ))}
                 </div>
-                <span className="text-law-blue-100 text-sm">Über 500 erfolgreiche Verfahren</span>
+                <span className="text-law-blue-100 text-sm">Über 200 erfolgreiche Mandanten</span>
               </div>
               
               <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-                Professionelle 
+                Kompetente 
                 <span className="block text-transparent bg-clip-text bg-gradient-to-r from-law-blue-200 to-white">
-                  Insolvenzverwaltung
+                  Rechtsberatung
                 </span>
               </h1>
               
               <p className="text-xl md:text-2xl mb-8 text-law-blue-100 leading-relaxed">
-                Vertrauen Sie auf unsere langjährige Erfahrung im Insolvenzrecht. 
-                Wir begleiten Sie durch alle Phasen des Insolvenzverfahrens mit 
-                <span className="font-semibold text-white"> garantierter Rechtssicherheit</span>.
+                Vertrauen Sie auf unsere fundierte Erfahrung im Wirtschafts- und Insolvenzrecht. 
+                Wir begleiten Sie durch komplexe rechtliche Herausforderungen mit 
+                <span className="font-semibold text-white"> garantierter Kompetenz</span>.
               </p>
               
               {/* Social proof */}
               <div className="flex items-center space-x-6 mb-8">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-white">25+</div>
+                  <div className="text-2xl font-bold text-white">10+</div>
                   <div className="text-sm text-law-blue-200">Jahre Erfahrung</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-white">500+</div>
-                  <div className="text-sm text-law-blue-200">Erfolgreiche Fälle</div>
+                  <div className="text-2xl font-bold text-white">200+</div>
+                  <div className="text-sm text-law-blue-200">Erfolgreiche Mandanten</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-white">98%</div>
-                  <div className="text-sm text-law-blue-200">Erfolgsquote</div>
+                  <div className="text-2xl font-bold text-white">Hessen</div>
+                  <div className="text-sm text-law-blue-200">Regional verwurzelt</div>
                 </div>
               </div>
               
@@ -88,8 +88,8 @@ const Index = () => {
                       <Briefcase className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-white font-semibold text-lg">Sofortige Hilfe</h3>
-                      <p className="text-law-blue-100">24/7 Notfall-Hotline verfügbar</p>
+                      <h3 className="text-white font-semibold text-lg">Persönliche Betreuung</h3>
+                      <p className="text-law-blue-100">Direkter Kontakt zu erfahrenen Anwälten</p>
                     </div>
                   </div>
                 </CardContent>
@@ -102,8 +102,8 @@ const Index = () => {
                       <Shield className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-white font-semibold text-lg">100% Rechtssicher</h3>
-                      <p className="text-law-blue-100">Vollständige Haftungsübernahme</p>
+                      <h3 className="text-white font-semibold text-lg">Fundierte Expertise</h3>
+                      <p className="text-law-blue-100">Spezialisierung in Wirtschaftsrecht</p>
                     </div>
                   </div>
                 </CardContent>
@@ -116,8 +116,8 @@ const Index = () => {
                       <Clock className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-white font-semibold text-lg">Schnelle Abwicklung</h3>
-                      <p className="text-law-blue-100">Durchschnittlich 30% kürzere Verfahren</p>
+                      <h3 className="text-white font-semibold text-lg">Effiziente Lösungen</h3>
+                      <p className="text-law-blue-100">Zielgerichtete und kosteneffiziente Beratung</p>
                     </div>
                   </div>
                 </CardContent>
@@ -132,11 +132,11 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">
-              Warum über 500 Unternehmen uns vertrauen
+              Unsere Rechtsgebiete
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Als spezialisierte Kanzlei für Insolvenzrecht bieten wir umfassende 
-              Beratung und Vertretung mit nachweislich erfolgreichen Resultaten.
+              Als erfahrene Rechtsanwälte bieten wir umfassende Beratung und Vertretung 
+              in verschiedenen Rechtsgebieten mit Fokus auf Wirtschaftsrecht.
             </p>
           </div>
           
@@ -147,8 +147,8 @@ const Index = () => {
                   <CheckCircle className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold mb-2 text-gray-900">Insolvenzverwaltung</h3>
-                  <p className="text-gray-600 leading-relaxed">Professionelle Abwicklung von Insolvenzverfahren mit garantierter Rechtssicherheit und optimaler Gläubigerbefriedigung</p>
+                  <h3 className="text-xl font-semibold mb-2 text-gray-900">Insolvenzrecht & -verwaltung</h3>
+                  <p className="text-gray-600 leading-relaxed">Professionelle Abwicklung von Insolvenzverfahren und umfassende Beratung bei Unternehmenskrisen</p>
                 </div>
               </div>
               
@@ -157,8 +157,18 @@ const Index = () => {
                   <Users className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold mb-2 text-gray-900">Insolvenzberatung</h3>
-                  <p className="text-gray-600 leading-relaxed">Umfassende Beratung vor und während des Verfahrens mit individuellen Lösungsstrategien für Ihre Situation</p>
+                  <h3 className="text-xl font-semibold mb-2 text-gray-900">Gesellschaftsrecht</h3>
+                  <p className="text-gray-600 leading-relaxed">Beratung bei Unternehmensgründung, -umstrukturierung und gesellschaftsrechtlichen Fragestellungen</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start space-x-4 group">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <FileText className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold mb-2 text-gray-900">Vertragsrecht</h3>
+                  <p className="text-gray-600 leading-relaxed">Gestaltung und Prüfung von Verträgen sowie Vertretung bei Vertragstreitigkeiten</p>
                 </div>
               </div>
               
@@ -167,8 +177,8 @@ const Index = () => {
                   <Award className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold mb-2 text-gray-900">Sanierungsberatung</h3>
-                  <p className="text-gray-600 leading-relaxed">Strategien zur Unternehmenssanierung entwickeln und nachhaltige Lösungen für die Zukunft implementieren</p>
+                  <h3 className="text-xl font-semibold mb-2 text-gray-900">Arbeitsrecht</h3>
+                  <p className="text-gray-600 leading-relaxed">Beratung für Arbeitgeber und Arbeitnehmer in allen arbeitsrechtlichen Angelegenheiten</p>
                 </div>
               </div>
               
@@ -188,8 +198,8 @@ const Index = () => {
                     <Shield className="w-8 h-8 text-white" />
                   </div>
                   <div className="text-3xl font-bold text-gray-900 mb-2">100%</div>
-                  <h3 className="font-semibold mb-2 text-gray-900">Rechtssicherheit</h3>
-                  <p className="text-gray-600 text-sm">Vollständige rechtliche Absicherung</p>
+                  <h3 className="font-semibold mb-2 text-gray-900">Zuverlässigkeit</h3>
+                  <p className="text-gray-600 text-sm">Verlässliche rechtliche Beratung</p>
                 </CardContent>
               </Card>
               
@@ -198,20 +208,20 @@ const Index = () => {
                   <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                     <Users className="w-8 h-8 text-white" />
                   </div>
-                  <div className="text-3xl font-bold text-gray-900 mb-2">25+</div>
+                  <div className="text-3xl font-bold text-gray-900 mb-2">10+</div>
                   <h3 className="font-semibold mb-2 text-gray-900">Jahre Erfahrung</h3>
-                  <p className="text-gray-600 text-sm">Langjährige Expertise im Insolvenzrecht</p>
+                  <p className="text-gray-600 text-sm">Bewährte Expertise im Wirtschaftsrecht</p>
                 </CardContent>
               </Card>
               
               <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg group">
                 <CardContent className="p-8 text-center">
                   <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                    <FileText className="w-8 h-8 text-white" />
+                    <MapPin className="w-8 h-8 text-white" />
                   </div>
-                  <div className="text-3xl font-bold text-gray-900 mb-2">500+</div>
-                  <h3 className="font-semibold mb-2 text-gray-900">Erfolgreiche Fälle</h3>
-                  <p className="text-gray-600 text-sm">Lückenlose Verfahrensdokumentation</p>
+                  <div className="text-3xl font-bold text-gray-900 mb-2">Hessen</div>
+                  <h3 className="font-semibold mb-2 text-gray-900">Regional stark</h3>
+                  <p className="text-gray-600 text-sm">Tiefe Kenntnis der Region</p>
                 </CardContent>
               </Card>
               
@@ -220,9 +230,9 @@ const Index = () => {
                   <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                     <Clock className="w-8 h-8 text-white" />
                   </div>
-                  <div className="text-3xl font-bold text-gray-900 mb-2">30%</div>
-                  <h3 className="font-semibold mb-2 text-gray-900">Schneller</h3>
-                  <p className="text-gray-600 text-sm">Effizientere Verfahrensabwicklung</p>
+                  <div className="text-3xl font-bold text-gray-900 mb-2">200+</div>
+                  <h3 className="font-semibold mb-2 text-gray-900">Mandanten</h3>
+                  <p className="text-gray-600 text-sm">Zufriedene Mandanten betreut</p>
                 </CardContent>
               </Card>
             </div>
@@ -246,7 +256,7 @@ const Index = () => {
             <div className="order-1 lg:order-2">
               <div className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-medium mb-6">
                 <Award className="w-4 h-4 mr-2" />
-                Ausgezeichnete Expertise
+                Kompetente Rechtsberatung
               </div>
               
               <h2 className="text-4xl font-bold text-gray-900 mb-6">
@@ -254,9 +264,9 @@ const Index = () => {
               </h2>
               
               <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                Mit Sitz in Frankfurt am Main sind wir Ihre Spezialisten für Insolvenzrecht 
-                und Insolvenzverwaltung. Unsere Partner Gerrit Külper und Christian Schwestka 
-                bringen über 25 Jahre kombinierte Erfahrung mit.
+                Mit Sitz in Frankfurt am Main sind wir eine etablierte Kanzlei für Wirtschafts- 
+                und Insolvenzrecht. Unsere Partner Gerrit Külper und Christian Schwestka 
+                bringen über 10 Jahre gemeinsame Erfahrung in der Region Hessen mit.
               </p>
               
               <div className="space-y-6">
@@ -265,10 +275,10 @@ const Index = () => {
                     <Award className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2 text-gray-900">Spezialisierung</h3>
+                    <h3 className="text-xl font-semibold mb-2 text-gray-900">Vielseitige Expertise</h3>
                     <p className="text-gray-600 leading-relaxed">
-                      Fokus ausschließlich auf Insolvenzrecht und verwandte Rechtsgebiete 
-                      mit nachweislich erfolgreichen Resultaten
+                      Breites Spektrum im Wirtschaftsrecht mit besonderer Spezialisierung 
+                      auf Insolvenzrecht und Unternehmenssanierung
                     </p>
                   </div>
                 </div>
@@ -278,10 +288,10 @@ const Index = () => {
                     <Users className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2 text-gray-900">Partnerschaftlich</h3>
+                    <h3 className="text-xl font-semibold mb-2 text-gray-900">Persönlich & Nahbar</h3>
                     <p className="text-gray-600 leading-relaxed">
-                      Persönliche Betreuung durch erfahrene Partner der Kanzlei 
-                      mit direktem Zugang zu Entscheidungsträgern
+                      Als mittelständische Kanzlei bieten wir persönliche Betreuung 
+                      mit kurzen Entscheidungswegen und direktem Ansprechpartner
                     </p>
                   </div>
                 </div>
@@ -291,10 +301,10 @@ const Index = () => {
                     <MapPin className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2 text-gray-900">Frankfurt Zentral</h3>
+                    <h3 className="text-xl font-semibold mb-2 text-gray-900">Regional verwurzelt</h3>
                     <p className="text-gray-600 leading-relaxed">
-                      Optimale Erreichbarkeit im Herzen der Wirtschaftsmetropole 
-                      mit exzellenter Verkehrsanbindung
+                      Tiefe Kenntnis der regionalen Besonderheiten in Hessen 
+                      und enge Vernetzung mit lokalen Institutionen
                     </p>
                   </div>
                 </div>
