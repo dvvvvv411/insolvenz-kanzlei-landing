@@ -42,7 +42,7 @@ const CTASection = () => {
                 Sprechen Sie direkt mit unseren Experten und erhalten Sie 
                 sofortige Hilfe bei dringenden Insolvenzangelegenheiten
               </p>
-              <Button variant="outline" className="w-full border-2 border-white text-white hover:bg-white hover:text-primary group">
+              <Button variant="outline" className="w-full border-2 border-white text-law-blue-900 hover:bg-white hover:text-law-blue-900 group">
                 <Phone className="w-4 h-4 mr-2" />
                 +49 69 94321306
                 <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -60,7 +60,7 @@ const CTASection = () => {
                 Senden Sie uns Ihre Unterlagen für eine ausführliche 
                 schriftliche Bewertung Ihrer Situation
               </p>
-              <Button variant="outline" className="w-full border-2 border-white text-white hover:bg-white hover:text-primary group">
+              <Button variant="outline" className="w-full border-2 border-white text-law-blue-900 hover:bg-white hover:text-law-blue-900 group">
                 <Mail className="w-4 h-4 mr-2" />
                 E-Mail senden
                 <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
