@@ -1,10 +1,9 @@
-
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CTASection from '@/components/CTASection';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { CheckCircle, Shield, Users, FileText, Clock, Award } from 'lucide-react';
+import { CheckCircle, Shield, Users, FileText, Clock, Award, MapPin } from 'lucide-react';
 
 const Index = () => {
   return (
