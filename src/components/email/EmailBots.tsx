@@ -180,7 +180,6 @@ const EmailBots = () => {
         case 'start':
           updateData.status = 'running';
           updateData.started_at = new Date().toISOString();
-          // Don't set last_activity_at here - let the first processing cycle handle it
           break;
         case 'pause':
           updateData.status = 'paused';
@@ -196,6 +195,35 @@ const EmailBots = () => {
         .eq('id', botId);
 
       if (error) throw error;
+
+      // If starting the bot, immediately trigger the first email send
+      if (action === 'start') {
+        console.log(`🚀 Starting bot ${botId} - triggering immediate email send`);
+        
+        try {
+          const { data, error: functionError } = await supabase.functions.invoke('process-email-bot', {
+            body: { bot_id: botId }
+          });
+
+          if (functionError) {
+            console.error('Error calling process-email-bot function:', functionError);
+            toast({
+              title: 'Warning',
+              description: 'Bot started but failed to send first email immediately. It will retry with the scheduled process.',
+              variant: 'destructive'
+            });
+          } else {
+            console.log('✅ Successfully triggered immediate email send:', data);
+          }
+        } catch (functionCallError) {
+          console.error('Error invoking edge function:', functionCallError);
+          toast({
+            title: 'Warning',
+            description: 'Bot started but failed to trigger immediate processing. It will be processed by the scheduled job.',
+            variant: 'destructive'
+          });
+        }
+      }
 
       toast({
         title: 'Success',

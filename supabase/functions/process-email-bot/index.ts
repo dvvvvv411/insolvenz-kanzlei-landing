@@ -53,6 +53,27 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
+    // Check if bot has completed all emails
+    if (bot.emails_sent >= bot.total_recipients) {
+      console.log('✅ All emails sent - marking bot as completed');
+      
+      await supabase
+        .from('email_bots')
+        .update({
+          status: 'completed',
+          completed_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', bot_id);
+
+      await logToDB(bot_id, 'info', 'All emails sent - bot completed', { total_sent: bot.emails_sent });
+
+      return new Response(JSON.stringify({ message: 'All emails sent - bot completed' }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
     // Get email settings
     const { data: emailSettings, error: settingsError } = await supabase
       .from('email_settings')
@@ -244,12 +265,28 @@ const handler = async (req: Request): Promise<Response> => {
         progress: `${bot.emails_sent + 1}/${bot.total_recipients}`
       });
 
+      // Calculate delay for next email based on rate limit
+      const secondsBetweenEmails = 60 / bot.emails_per_minute;
+      const delayMs = Math.max(1000, secondsBetweenEmails * 1000); // At least 1 second delay
+
+      // Check if there are more emails to send
+      const newEmailsSent = bot.emails_sent + 1;
+      if (newEmailsSent < bot.total_recipients) {
+        console.log(`⏰ Scheduling next email in ${delayMs}ms (${secondsBetweenEmails} seconds) for bot ${bot_id}`);
+        
+        // Schedule the next email send using a background task
+        EdgeRuntime.waitUntil(scheduleNextEmail(bot_id, delayMs));
+      } else {
+        console.log(`🎉 Bot ${bot_id} has sent all emails (${newEmailsSent}/${bot.total_recipients})`);
+      }
+
       return new Response(JSON.stringify({ 
         success: true, 
         recipient: recipientEmail,
-        emails_sent: bot.emails_sent + 1,
+        emails_sent: newEmailsSent,
         total_recipients: bot.total_recipients,
-        progress: `${bot.emails_sent + 1}/${bot.total_recipients}`
+        progress: `${newEmailsSent}/${bot.total_recipients}`,
+        next_email_in_seconds: newEmailsSent < bot.total_recipients ? secondsBetweenEmails : null
       }), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -294,6 +331,42 @@ const handler = async (req: Request): Promise<Response> => {
     });
   }
 };
+
+// Function to schedule the next email send
+async function scheduleNextEmail(botId: string, delayMs: number) {
+  console.log(`⏰ Waiting ${delayMs}ms before sending next email for bot ${botId}`);
+  
+  await new Promise(resolve => setTimeout(resolve, delayMs));
+  
+  try {
+    console.log(`🔄 Triggering next email for bot ${botId}`);
+    
+    // Make a recursive call to send the next email
+    const response = await fetch(`${supabaseUrl}/functions/v1/process-email-bot`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`
+      },
+      body: JSON.stringify({ bot_id: botId })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error(`❌ Failed to trigger next email for bot ${botId}:`, errorData);
+      await logToDB(botId, 'error', 'Failed to trigger next email in sequence', { 
+        status: response.status, 
+        error: errorData 
+      });
+    } else {
+      const result = await response.json();
+      console.log(`✅ Successfully triggered next email for bot ${botId}:`, result);
+    }
+  } catch (error: any) {
+    console.error(`💥 Error scheduling next email for bot ${botId}:`, error);
+    await logToDB(botId, 'error', 'Error in email scheduling sequence', { error: error.message });
+  }
+}
 
 // Helper function to log to database
 async function logToDB(bot_id: string, level: string, message: string, details?: any) {
