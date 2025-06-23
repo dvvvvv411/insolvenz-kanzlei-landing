@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.50.0";
 import { Resend } from "npm:resend@2.0.0";
@@ -273,22 +272,17 @@ const handler = async (req: Request): Promise<Response> => {
 
           console.log(`✅ PDF downloaded successfully, size: ${pdfData.size} bytes, type: ${pdfData.type}`);
 
-          // Convert Blob to ArrayBuffer for Resend
-          const arrayBuffer = await pdfData.arrayBuffer();
-          console.log(`🔄 Converting PDF to Uint8Array for Resend, size: ${arrayBuffer.byteLength} bytes`);
-          
-          const uint8Array = new Uint8Array(arrayBuffer);
-          
+          // Use the Blob directly as attachment content - this is what Resend expects
           emailData.attachments = [
             {
               filename: template.pdf_file_name,
-              content: uint8Array,
+              content: pdfData,
               type: 'application/pdf',
               disposition: 'attachment'
             }
           ];
           
-          console.log(`✅ PDF attachment prepared successfully: ${template.pdf_file_name} (${uint8Array.length} bytes)`);
+          console.log(`✅ PDF attachment prepared successfully: ${template.pdf_file_name} (${pdfData.size} bytes)`);
 
         } catch (attachmentError: any) {
           console.error('❌ PDF attachment processing failed:', attachmentError);
