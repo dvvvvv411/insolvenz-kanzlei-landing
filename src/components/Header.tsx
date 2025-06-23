@@ -30,7 +30,7 @@ const Header = () => {
             <img 
               src="https://i.imgur.com/7TEsXpP.png" 
               alt="Kanzlei Logo" 
-              className="h-12 w-auto"
+              className="h-18 w-auto"
             />
           </Link>
           

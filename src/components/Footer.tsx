@@ -8,9 +8,9 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-2">
             <img 
-              src="https://i.imgur.com/7TEsXpP.png" 
+              src="https://i.imgur.com/iruo9i4.png" 
               alt="Kanzlei Logo" 
-              className="h-12 w-auto mb-4"
+              className="h-18 w-auto mb-4"
             />
             <h3 className="text-lg font-semibold mb-4">
               Lonquich, Külper & Kollegen Rechtsanwälte PartG
