@@ -326,6 +326,9 @@ export type Database = {
           created_at: string
           id: string
           name: string
+          pdf_file_name: string | null
+          pdf_file_path: string | null
+          pdf_file_size: number | null
           subject: string
           updated_at: string
         }
@@ -334,6 +337,9 @@ export type Database = {
           created_at?: string
           id?: string
           name: string
+          pdf_file_name?: string | null
+          pdf_file_path?: string | null
+          pdf_file_size?: number | null
           subject: string
           updated_at?: string
         }
@@ -342,6 +348,9 @@ export type Database = {
           created_at?: string
           id?: string
           name?: string
+          pdf_file_name?: string | null
+          pdf_file_path?: string | null
+          pdf_file_size?: number | null
           subject?: string
           updated_at?: string
         }
