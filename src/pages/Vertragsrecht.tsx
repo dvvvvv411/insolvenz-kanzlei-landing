@@ -1,4 +1,3 @@
-
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -90,7 +89,7 @@ const Vertragsrecht = () => {
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Link>
                   </Button>
-                  <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-law-blue-900">
+                  <Button size="lg" variant="outline" className="border-2 border-white text-law-blue-900 hover:bg-white hover:text-law-blue-900">
                     +49 69 94321306
                   </Button>
                 </div>
@@ -243,7 +242,7 @@ const Vertragsrecht = () => {
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-law-blue-900" asChild>
+              <Button size="lg" variant="outline" className="border-2 border-white text-law-blue-900 hover:bg-white hover:text-law-blue-900" asChild>
                 <Link to="/kontakt">
                   Kontakt aufnehmen
                 </Link>

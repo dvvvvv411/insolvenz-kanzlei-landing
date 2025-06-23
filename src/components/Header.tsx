@@ -10,7 +10,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -21,10 +21,6 @@ const Header = () => {
     { title: "Gesellschaftsrecht", href: "/leistungen/gesellschaftsrecht", description: "Unternehmensgründung und M&A Transaktionen" },
     { title: "Vertragsrecht", href: "/leistungen/vertragsrecht", description: "Vertragsgestaltung und -durchsetzung" },
     { title: "Arbeitsrecht", href: "/leistungen/arbeitsrecht", description: "Für Arbeitgeber und Arbeitnehmer" }
-  ];
-
-  const ueberUnsItems = [
-    { title: "Über uns", href: "/ueber-uns", description: "Lernen Sie unsere Kanzlei kennen" }
   ];
 
   return (
@@ -71,26 +67,9 @@ const Header = () => {
               </NavigationMenuItem>
 
               <NavigationMenuItem>
-                <NavigationMenuTrigger className="text-gray-700 hover:text-primary transition-colors">
+                <Link to="/ueber-uns" className="text-gray-700 hover:text-primary transition-colors px-4 py-2">
                   Über uns
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="grid gap-3 p-6 w-[400px]">
-                    {ueberUnsItems.map((item) => (
-                      <NavigationMenuLink key={item.href} asChild>
-                        <Link
-                          to={item.href}
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        >
-                          <div className="text-sm font-medium leading-none">{item.title}</div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            {item.description}
-                          </p>
-                        </Link>
-                      </NavigationMenuLink>
-                    ))}
-                  </div>
-                </NavigationMenuContent>
+                </Link>
               </NavigationMenuItem>
 
               <NavigationMenuItem>
@@ -139,20 +118,9 @@ const Header = () => {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <div className="font-medium text-gray-900">Über uns</div>
-                <div className="pl-4 space-y-2">
-                  {ueberUnsItems.map((item) => (
-                    <Link 
-                      key={item.href}
-                      to={item.href} 
-                      className="block text-gray-700 hover:text-primary transition-colors text-sm"
-                    >
-                      {item.title}
-                    </Link>
-                  ))}
-                </div>
-              </div>
+              <Link to="/ueber-uns" className="text-gray-700 hover:text-primary transition-colors">
+                Über uns
+              </Link>
 
               <Link to="/kontakt" className="text-gray-700 hover:text-primary transition-colors">
                 Kontakt

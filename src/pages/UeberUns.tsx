@@ -61,7 +61,7 @@ const UeberUns = () => {
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Link>
                 </Button>
-                <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-law-blue-900" asChild>
+                <Button size="lg" variant="outline" className="border-2 border-white text-law-blue-900 hover:bg-white hover:text-law-blue-900" asChild>
                   <Link to="/erstberatung">
                     Kostenlose Beratung
                   </Link>
@@ -190,7 +190,7 @@ const UeberUns = () => {
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-law-blue-900" asChild>
+              <Button size="lg" variant="outline" className="border-2 border-white text-law-blue-900 hover:bg-white hover:text-law-blue-900" asChild>
                 <Link to="/kontakt">
                   Kontakt aufnehmen
                 </Link>
