@@ -2,10 +2,30 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X } from 'lucide-react';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from '@/components/ui/navigation-menu';
+import { Menu, X, ChevronDown } from 'lucide-react';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const leistungenItems = [
+    { title: "Alle Leistungen", href: "/leistungen", description: "Überblick über unser gesamtes Leistungsspektrum" },
+    { title: "Insolvenzrecht", href: "/leistungen/insolvenzrecht", description: "Insolvenzverwaltung und Sanierungsberatung" },
+    { title: "Gesellschaftsrecht", href: "/leistungen/gesellschaftsrecht", description: "Unternehmensgründung und M&A Transaktionen" },
+    { title: "Vertragsrecht", href: "/leistungen/vertragsrecht", description: "Vertragsgestaltung und -durchsetzung" },
+    { title: "Arbeitsrecht", href: "/leistungen/arbeitsrecht", description: "Für Arbeitgeber und Arbeitnehmer" }
+  ];
+
+  const ueberUnsItems = [
+    { title: "Über uns", href: "/ueber-uns", description: "Lernen Sie unsere Kanzlei kennen" }
+  ];
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
@@ -19,24 +39,73 @@ const Header = () => {
             />
           </Link>
           
-          <nav className="hidden md:flex space-x-8">
-            <Link to="/" className="text-gray-700 hover:text-primary transition-colors">
-              Home
-            </Link>
-            <Link to="/leistungen" className="text-gray-700 hover:text-primary transition-colors">
-              Leistungen
-            </Link>
-            <Link to="/ueber-uns" className="text-gray-700 hover:text-primary transition-colors">
-              Über uns
-            </Link>
-            <Link to="/kontakt" className="text-gray-700 hover:text-primary transition-colors">
-              Kontakt
-            </Link>
-          </nav>
+          <NavigationMenu className="hidden md:flex">
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <Link to="/" className="text-gray-700 hover:text-primary transition-colors px-4 py-2">
+                  Home
+                </Link>
+              </NavigationMenuItem>
+              
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="text-gray-700 hover:text-primary transition-colors">
+                  Leistungen
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <div className="grid gap-3 p-6 w-[400px] lg:w-[500px]">
+                    {leistungenItems.map((item) => (
+                      <NavigationMenuLink key={item.href} asChild>
+                        <Link
+                          to={item.href}
+                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                        >
+                          <div className="text-sm font-medium leading-none">{item.title}</div>
+                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                            {item.description}
+                          </p>
+                        </Link>
+                      </NavigationMenuLink>
+                    ))}
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="text-gray-700 hover:text-primary transition-colors">
+                  Über uns
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <div className="grid gap-3 p-6 w-[400px]">
+                    {ueberUnsItems.map((item) => (
+                      <NavigationMenuLink key={item.href} asChild>
+                        <Link
+                          to={item.href}
+                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                        >
+                          <div className="text-sm font-medium leading-none">{item.title}</div>
+                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                            {item.description}
+                          </p>
+                        </Link>
+                      </NavigationMenuLink>
+                    ))}
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <Link to="/kontakt" className="text-gray-700 hover:text-primary transition-colors px-4 py-2">
+                  Kontakt
+                </Link>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
 
           <div className="hidden md:flex items-center space-x-4">
-            <Button>
-              Beratung vereinbaren
+            <Button asChild>
+              <Link to="/erstberatung">
+                Beratung vereinbaren
+              </Link>
             </Button>
           </div>
 
@@ -54,17 +123,45 @@ const Header = () => {
               <Link to="/" className="text-gray-700 hover:text-primary transition-colors">
                 Home
               </Link>
-              <Link to="/leistungen" className="text-gray-700 hover:text-primary transition-colors">
-                Leistungen
-              </Link>
-              <Link to="/ueber-uns" className="text-gray-700 hover:text-primary transition-colors">
-                Über uns
-              </Link>
+              
+              <div className="space-y-2">
+                <div className="font-medium text-gray-900">Leistungen</div>
+                <div className="pl-4 space-y-2">
+                  {leistungenItems.map((item) => (
+                    <Link 
+                      key={item.href}
+                      to={item.href} 
+                      className="block text-gray-700 hover:text-primary transition-colors text-sm"
+                    >
+                      {item.title}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="font-medium text-gray-900">Über uns</div>
+                <div className="pl-4 space-y-2">
+                  {ueberUnsItems.map((item) => (
+                    <Link 
+                      key={item.href}
+                      to={item.href} 
+                      className="block text-gray-700 hover:text-primary transition-colors text-sm"
+                    >
+                      {item.title}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
               <Link to="/kontakt" className="text-gray-700 hover:text-primary transition-colors">
                 Kontakt
               </Link>
-              <Button className="mt-4 w-fit">
-                Beratung vereinbaren
+              
+              <Button className="mt-4 w-fit" asChild>
+                <Link to="/erstberatung">
+                  Beratung vereinbaren
+                </Link>
               </Button>
             </nav>
           </div>
