@@ -16,75 +16,182 @@ const supabaseUrl = "https://kwsmszwrlmfnkkfavycb.supabase.co";
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-// Helper function to convert Blob to Base64 with chunked processing
-async function blobToBase64Chunked(blob: Blob, chunkSize: number = 1024 * 1024): Promise<string> {
-  const arrayBuffer = await blob.arrayBuffer();
-  const uint8Array = new Uint8Array(arrayBuffer);
+// Optimized Base64 encoding function with memory management
+async function blobToBase64Optimized(blob: Blob): Promise<string> {
+  console.log(`🔧 Starting optimized Base64 conversion for ${blob.size} bytes`);
   
-  let base64 = '';
-  for (let i = 0; i < uint8Array.length; i += chunkSize) {
-    const chunk = uint8Array.slice(i, i + chunkSize);
-    const chunkArray = Array.from(chunk);
-    const chunkString = String.fromCharCode(...chunkArray);
-    base64 += btoa(chunkString);
+  try {
+    // Use streaming approach for large files
+    const stream = blob.stream();
+    const reader = stream.getReader();
+    let base64 = '';
+    let totalProcessed = 0;
+    const chunkSize = 3 * 1024; // 3KB chunks for optimal base64 encoding (divisible by 3)
+    
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      
+      // Convert chunk to base64
+      const chunkArray = Array.from(value);
+      const chunkString = String.fromCharCode(...chunkArray);
+      base64 += btoa(chunkString);
+      
+      totalProcessed += value.length;
+      
+      // Log progress for large files
+      if (totalProcessed % (50 * 1024) === 0) {
+        console.log(`📊 Base64 progress: ${totalProcessed}/${blob.size} bytes (${Math.round(totalProcessed/blob.size*100)}%)`);
+      }
+    }
+    
+    console.log(`✅ Base64 encoding completed: ${base64.length} characters`);
+    return base64;
+    
+  } catch (error: any) {
+    console.error(`❌ Optimized Base64 encoding failed: ${error.message}`);
+    throw error;
   }
-  
-  return base64;
 }
 
-// Helper function to test PDF attachment with different formats
+// Enhanced PDF attachment preparation with multiple methods and validation
 async function preparePdfAttachment(pdfData: Blob, fileName: string) {
   console.log(`🔄 Preparing PDF attachment: ${fileName} (${pdfData.size} bytes)`);
   
-  // Method 1: Try Base64 encoding with chunked processing (Resend preferred)
+  // Validate file size (Resend limit is 40MB total for all attachments)
+  const maxFileSize = 25 * 1024 * 1024; // 25MB to be safe
+  if (pdfData.size > maxFileSize) {
+    throw new Error(`PDF file too large: ${pdfData.size} bytes (max: ${maxFileSize} bytes)`);
+  }
+  
+  // Method 1: Try optimized Base64 encoding (Resend preferred method)
   try {
-    console.log('📝 Attempting Base64 encoding with chunked processing...');
-    const base64Content = await blobToBase64Chunked(pdfData, 512 * 1024); // 512KB chunks
+    console.log('📝 Attempting optimized Base64 encoding...');
+    const base64Content = await blobToBase64Optimized(pdfData);
     
     const attachment = {
       filename: fileName,
       content: base64Content,
       type: 'application/pdf',
-      disposition: 'attachment' as const,
-      encoding: 'base64' as const
+      disposition: 'attachment' as const
     };
     
-    console.log(`✅ Base64 encoding successful: ${fileName} (${base64Content.length} chars)`);
-    return { attachment, method: 'base64' };
+    console.log(`✅ Optimized Base64 encoding successful: ${fileName}`);
+    return { attachment, method: 'base64_optimized' };
     
   } catch (base64Error: any) {
-    console.warn(`⚠️ Base64 encoding failed: ${base64Error.message}`);
+    console.warn(`⚠️ Optimized Base64 encoding failed: ${base64Error.message}`);
     
-    // Method 2: Fallback to Uint8Array
+    // Method 2: Try Buffer approach (Node.js compatible)
     try {
-      console.log('🔄 Falling back to Uint8Array conversion...');
+      console.log('🔄 Trying Buffer-based conversion...');
       const arrayBuffer = await pdfData.arrayBuffer();
-      const uint8Array = new Uint8Array(arrayBuffer);
+      const buffer = new Uint8Array(arrayBuffer);
+      
+      // Convert to base64 using standard approach
+      let binary = '';
+      const chunkSize = 8192; // 8KB chunks
+      
+      for (let i = 0; i < buffer.length; i += chunkSize) {
+        const chunk = buffer.slice(i, i + chunkSize);
+        binary += String.fromCharCode.apply(null, Array.from(chunk));
+      }
+      
+      const base64Content = btoa(binary);
       
       const attachment = {
         filename: fileName,
-        content: uint8Array,
+        content: base64Content,
         type: 'application/pdf',
         disposition: 'attachment' as const
       };
       
-      console.log(`✅ Uint8Array conversion successful: ${fileName} (${uint8Array.length} bytes)`);
-      return { attachment, method: 'uint8array' };
+      console.log(`✅ Buffer conversion successful: ${fileName} (${base64Content.length} chars)`);
+      return { attachment, method: 'buffer_base64' };
       
-    } catch (uint8Error: any) {
-      console.warn(`⚠️ Uint8Array conversion failed: ${uint8Error.message}`);
+    } catch (bufferError: any) {
+      console.warn(`⚠️ Buffer conversion failed: ${bufferError.message}`);
       
-      // Method 3: Last resort - try direct Blob (should not work but worth testing)
-      console.log('🔄 Last resort: attempting direct Blob usage...');
-      const attachment = {
-        filename: fileName,
-        content: pdfData,
-        type: 'application/pdf',
-        disposition: 'attachment' as const
-      };
-      
-      return { attachment, method: 'blob' };
+      // Method 3: Direct ArrayBuffer to Base64 (alternative approach)
+      try {
+        console.log('🔄 Trying direct ArrayBuffer conversion...');
+        const arrayBuffer = await pdfData.arrayBuffer();
+        const bytes = new Uint8Array(arrayBuffer);
+        
+        // Use TextDecoder for binary data
+        const decoder = new TextDecoder('latin1');
+        const binaryString = decoder.decode(bytes);
+        const base64Content = btoa(binaryString);
+        
+        const attachment = {
+          filename: fileName,
+          content: base64Content,
+          type: 'application/pdf',
+          disposition: 'attachment' as const
+        };
+        
+        console.log(`✅ ArrayBuffer conversion successful: ${fileName}`);
+        return { attachment, method: 'arraybuffer_base64' };
+        
+      } catch (arrayBufferError: any) {
+        console.error(`❌ All conversion methods failed. Last error: ${arrayBufferError.message}`);
+        throw new Error(`Failed to convert PDF to attachment format: ${arrayBufferError.message}`);
+      }
     }
+  }
+}
+
+// Enhanced email validation and sending
+async function sendEmailWithValidation(resend: any, emailData: any, recipientEmail: string, fileName?: string) {
+  console.log(`🚀 Sending email to ${recipientEmail} with validation`);
+  
+  // Pre-send validation
+  if (emailData.attachments && emailData.attachments.length > 0) {
+    const attachment = emailData.attachments[0];
+    console.log(`📎 Validating attachment: ${attachment.filename}`);
+    console.log(`📊 Attachment size: ${attachment.content?.length || 0} characters`);
+    console.log(`📋 Attachment type: ${attachment.type}`);
+    console.log(`📌 Attachment disposition: ${attachment.disposition}`);
+    
+    // Validate attachment structure
+    if (!attachment.filename || !attachment.content || !attachment.type) {
+      throw new Error('Invalid attachment structure: missing required fields');
+    }
+    
+    // Validate base64 content
+    if (typeof attachment.content === 'string') {
+      try {
+        // Test base64 validity by attempting to decode a small portion
+        const testChunk = attachment.content.substring(0, 100);
+        atob(testChunk);
+        console.log(`✅ Base64 content validation passed`);
+      } catch (b64Error) {
+        throw new Error('Invalid base64 content in attachment');
+      }
+    }
+  }
+  
+  // Send email with enhanced error handling
+  try {
+    const emailResponse = await resend.emails.send(emailData);
+    
+    // Check for Resend API errors
+    if (!emailResponse || emailResponse.error) {
+      const errorMsg = emailResponse?.error?.message || 'Unknown Resend API error';
+      throw new Error(`Resend API error: ${errorMsg}`);
+    }
+    
+    // Validate successful response
+    if (!emailResponse.data || !emailResponse.data.id) {
+      throw new Error('Invalid response from Resend API: missing email ID');
+    }
+    
+    console.log(`✅ Email sent successfully with ID: ${emailResponse.data.id}`);
+    return emailResponse;
+    
+  } catch (sendError: any) {
+    console.error(`❌ Email send failed: ${sendError.message}`);
+    throw sendError;
   }
 }
 
@@ -318,18 +425,13 @@ const handler = async (req: Request): Promise<Response> => {
       };
 
       let attachmentMethod = 'none';
+      let attachmentSuccess = false;
 
       // Add PDF attachment if template has one
       if (template.pdf_file_path && template.pdf_file_name) {
-        console.log(`📎 Adding PDF attachment: ${template.pdf_file_name}`);
+        console.log(`📎 Processing PDF attachment: ${template.pdf_file_name}`);
         
         try {
-          // Validate file size before processing (max 25MB for Resend)
-          const maxFileSize = 25 * 1024 * 1024; // 25MB in bytes
-          if (template.pdf_file_size && template.pdf_file_size > maxFileSize) {
-            throw new Error(`PDF file too large: ${template.pdf_file_size} bytes (max: ${maxFileSize} bytes)`);
-          }
-
           // Download the PDF from Supabase Storage
           console.log(`⬇️ Downloading PDF from storage: ${template.pdf_file_path}`);
           const { data: pdfData, error: storageError } = await supabase.storage
@@ -347,18 +449,19 @@ const handler = async (req: Request): Promise<Response> => {
 
           console.log(`✅ PDF downloaded successfully, size: ${pdfData.size} bytes, type: ${pdfData.type}`);
 
-          // Prepare PDF attachment with multiple encoding strategies
+          // Prepare PDF attachment with enhanced methods
           const { attachment, method } = await preparePdfAttachment(pdfData, template.pdf_file_name);
           attachmentMethod = method;
           
           emailData.attachments = [attachment];
+          attachmentSuccess = true;
           
           console.log(`✅ PDF attachment prepared successfully using ${method}: ${template.pdf_file_name}`);
 
         } catch (attachmentError: any) {
           console.error('❌ PDF attachment processing failed:', attachmentError);
           
-          // Log the attachment error but don't fail the entire email
+          // Log the attachment error but continue without attachment
           await logToDB(bot_id, 'warning', `PDF attachment failed for ${recipientEmail}: ${attachmentError.message}`, {
             recipient: recipientEmail,
             pdf_file_name: template.pdf_file_name,
@@ -367,18 +470,13 @@ const handler = async (req: Request): Promise<Response> => {
             error_stack: attachmentError.stack
           });
 
-          // Continue without attachment - this is a business decision
-          console.log(`⚠️ Continuing email send without PDF attachment due to error: ${attachmentError.message}`);
+          // For now, fail the email if attachment fails - this ensures we catch issues
+          throw new Error(`Email send aborted due to attachment failure: ${attachmentError.message}`);
         }
       }
 
-      // Send email using Resend
-      const emailResponse = await resend.emails.send(emailData);
-
-      // Check for Resend API errors
-      if (emailResponse.error) {
-        throw new Error(`Resend API error: ${emailResponse.error.message}`);
-      }
+      // Send email with enhanced validation
+      const emailResponse = await sendEmailWithValidation(resend, emailData, recipientEmail, template.pdf_file_name);
 
       console.log(`✅ Email sent successfully to ${recipientEmail}:`, emailResponse);
 
@@ -392,14 +490,16 @@ const handler = async (req: Request): Promise<Response> => {
         })
         .eq('id', bot_id);
 
-      // Log success
+      // Log success with detailed attachment info
       await logToDB(bot_id, 'success', `Email sent successfully to ${recipientEmail}`, {
         recipient: recipientEmail,
         subject: emailSubject,
         resend_id: emailResponse.data?.id,
         progress: `${bot.emails_sent + 1}/${bot.total_recipients}`,
-        has_attachment: !!template.pdf_file_name && !!emailData.attachments,
-        attachment_method: attachmentMethod
+        has_attachment: attachmentSuccess,
+        attachment_method: attachmentMethod,
+        attachment_filename: template.pdf_file_name || null,
+        attachment_size: template.pdf_file_size || null
       });
 
       // Calculate delay for next email based on rate limit
@@ -424,8 +524,9 @@ const handler = async (req: Request): Promise<Response> => {
         total_recipients: bot.total_recipients,
         progress: `${newEmailsSent}/${bot.total_recipients}`,
         next_email_in_seconds: newEmailsSent < bot.total_recipients ? secondsBetweenEmails : null,
-        has_attachment: !!template.pdf_file_name && !!emailData.attachments,
-        attachment_method: attachmentMethod
+        has_attachment: attachmentSuccess,
+        attachment_method: attachmentMethod,
+        attachment_filename: template.pdf_file_name || null
       }), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -444,13 +545,14 @@ const handler = async (req: Request): Promise<Response> => {
         })
         .eq('id', bot_id);
 
-      // Log failure
+      // Log failure with detailed error info
       await logToDB(bot_id, 'error', `Failed to send email to ${recipientEmail}`, {
         recipient: recipientEmail,
         error: emailError.message,
         subject: emailSubject,
         error_code: emailError.code,
-        error_stack: emailError.stack
+        error_stack: emailError.stack,
+        attachment_attempted: !!template.pdf_file_name
       });
 
       return new Response(JSON.stringify({ 
