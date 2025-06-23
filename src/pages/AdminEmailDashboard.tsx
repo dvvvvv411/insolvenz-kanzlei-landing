@@ -6,12 +6,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/components/ui/use-toast';
-import { LogOut, Mail, Users, FileText, Settings, BarChart } from 'lucide-react';
+import { LogOut, Mail, Users, FileText, Settings, BarChart, Bot } from 'lucide-react';
 import EmailTemplates from '@/components/email/EmailTemplates';
 import RecipientLists from '@/components/email/RecipientLists';
 import EmailCampaigns from '@/components/email/EmailCampaigns';
 import EmailSettings from '@/components/email/EmailSettings';
 import EmailLogs from '@/components/email/EmailLogs';
+import EmailBots from '@/components/email/EmailBots';
 
 const AdminEmailDashboard = () => {
   const navigate = useNavigate();
@@ -79,10 +80,14 @@ const AdminEmailDashboard = () => {
         </div>
 
         <Tabs defaultValue="campaigns" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="campaigns" className="flex items-center space-x-2">
               <Mail className="h-4 w-4" />
               <span>Campaigns</span>
+            </TabsTrigger>
+            <TabsTrigger value="bots" className="flex items-center space-x-2">
+              <Bot className="h-4 w-4" />
+              <span>Bots</span>
             </TabsTrigger>
             <TabsTrigger value="templates" className="flex items-center space-x-2">
               <FileText className="h-4 w-4" />
@@ -104,6 +109,10 @@ const AdminEmailDashboard = () => {
 
           <TabsContent value="campaigns" className="mt-6">
             <EmailCampaigns />
+          </TabsContent>
+
+          <TabsContent value="bots" className="mt-6">
+            <EmailBots />
           </TabsContent>
 
           <TabsContent value="templates" className="mt-6">

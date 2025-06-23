@@ -101,6 +101,106 @@ export type Database = {
         }
         Relationships: []
       }
+      email_bot_logs: {
+        Row: {
+          bot_id: string
+          created_at: string
+          details: Json | null
+          id: string
+          level: string
+          message: string
+        }
+        Insert: {
+          bot_id: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          level: string
+          message: string
+        }
+        Update: {
+          bot_id?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          level?: string
+          message?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_bot_logs_bot_id_fkey"
+            columns: ["bot_id"]
+            isOneToOne: false
+            referencedRelation: "email_bots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_bots: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          emails_failed: number
+          emails_per_minute: number
+          emails_sent: number
+          error_message: string | null
+          id: string
+          last_activity_at: string | null
+          name: string
+          recipient_source_id: string
+          recipient_source_type: string
+          started_at: string | null
+          status: string
+          template_id: string
+          total_recipients: number
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          emails_failed?: number
+          emails_per_minute?: number
+          emails_sent?: number
+          error_message?: string | null
+          id?: string
+          last_activity_at?: string | null
+          name: string
+          recipient_source_id: string
+          recipient_source_type: string
+          started_at?: string | null
+          status?: string
+          template_id: string
+          total_recipients?: number
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          emails_failed?: number
+          emails_per_minute?: number
+          emails_sent?: number
+          error_message?: string | null
+          id?: string
+          last_activity_at?: string | null
+          name?: string
+          recipient_source_id?: string
+          recipient_source_type?: string
+          started_at?: string | null
+          status?: string
+          template_id?: string
+          total_recipients?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_bots_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "email_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_campaigns: {
         Row: {
           created_at: string
