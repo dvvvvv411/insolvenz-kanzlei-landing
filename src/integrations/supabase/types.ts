@@ -415,6 +415,10 @@ export type Database = {
         Args: { user_email: string }
         Returns: boolean
       }
+      process_email_bots: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       update_admin_last_login: {
         Args: { user_email: string }
         Returns: undefined
