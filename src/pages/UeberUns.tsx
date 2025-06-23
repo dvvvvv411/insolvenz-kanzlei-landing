@@ -1,4 +1,3 @@
-
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -35,9 +34,7 @@ const UeberUns = () => {
     { number: "25+", label: "Jahre Erfahrung", icon: Clock },
     { number: "500+", label: "Erfolgreiche Verfahren", icon: Award },
     { number: "2", label: "Spezialisierte Partner", icon: Users },
-    { number: "100%", label: "Man
-
-dantenzufriedenheit", icon: Heart }
+    { number: "100%", label: "Mandantenzufriedenheit", icon: Heart }
   ];
 
   return (
