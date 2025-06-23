@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -22,37 +23,46 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminEmailDashboard from "./pages/AdminEmailDashboard";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 3,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+    },
+  },
+});
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <ScrollToTop />
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/leistungen" element={<Leistungen />} />
-          <Route path="/leistungen/insolvenzrecht" element={<Insolvenzrecht />} />
-          <Route path="/leistungen/gesellschaftsrecht" element={<Gesellschaftsrecht />} />
-          <Route path="/leistungen/vertragsrecht" element={<Vertragsrecht />} />
-          <Route path="/leistungen/arbeitsrecht" element={<Arbeitsrecht />} />
-          <Route path="/ueber-uns" element={<UeberUns />} />
-          <Route path="/kontakt" element={<Kontakt />} />
-          <Route path="/erstberatung" element={<Erstberatung />} />
-          <Route path="/impressum" element={<Impressum />} />
-          <Route path="/datenschutz" element={<Datenschutz />} />
-          <Route path="/agb" element={<AGB />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/email" element={<AdminEmailDashboard />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App: React.FC = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <ScrollToTop />
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/leistungen" element={<Leistungen />} />
+            <Route path="/leistungen/insolvenzrecht" element={<Insolvenzrecht />} />
+            <Route path="/leistungen/gesellschaftsrecht" element={<Gesellschaftsrecht />} />
+            <Route path="/leistungen/vertragsrecht" element={<Vertragsrecht />} />
+            <Route path="/leistungen/arbeitsrecht" element={<Arbeitsrecht />} />
+            <Route path="/ueber-uns" element={<UeberUns />} />
+            <Route path="/kontakt" element={<Kontakt />} />
+            <Route path="/erstberatung" element={<Erstberatung />} />
+            <Route path="/impressum" element={<Impressum />} />
+            <Route path="/datenschutz" element={<Datenschutz />} />
+            <Route path="/agb" element={<AGB />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/email" element={<AdminEmailDashboard />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
