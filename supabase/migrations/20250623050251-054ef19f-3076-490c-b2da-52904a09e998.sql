@@ -12,18 +12,9 @@ LANGUAGE plpgsql
 AS $$
 DECLARE
     bot_record RECORD;
-    recipients_cursor CURSOR FOR 
-        SELECT r.email, r.first_name, r.last_name
-        FROM recipients r 
-        WHERE r.list_id = bot_record.recipient_source_id;
-    batch_cursor CURSOR FOR
-        SELECT be.email
-        FROM batch_emails be
-        WHERE be.batch_id = bot_record.recipient_source_id 
-        AND be.is_valid = true;
-    recipient_record RECORD;
     time_since_last_activity INTERVAL;
     should_process BOOLEAN;
+    seconds_between_emails NUMERIC;
 BEGIN
     -- Loop through all running bots
     FOR bot_record IN 
@@ -34,12 +25,16 @@ BEGIN
         -- Check if enough time has passed based on rate limit
         should_process := FALSE;
         
+        -- Calculate seconds between emails based on emails per minute
+        seconds_between_emails := 60.0 / bot_record.emails_per_minute;
+        
         IF bot_record.last_activity_at IS NULL THEN
+            -- First time running, allow processing
             should_process := TRUE;
         ELSE
-            time_since_last_activity := now() - bot_record.last_activity_at;
-            -- Convert emails per minute to seconds between emails
-            IF time_since_last_activity >= INTERVAL '1 minute' / bot_record.emails_per_minute THEN
+            time_since_last_activity := EXTRACT(EPOCH FROM (now() - bot_record.last_activity_at));
+            -- Check if enough time has passed
+            IF time_since_last_activity >= seconds_between_emails THEN
                 should_process := TRUE;
             END IF;
         END IF;
@@ -62,12 +57,31 @@ BEGIN
                 CONTINUE;
             END IF;
             
+            -- Log processing attempt
+            INSERT INTO email_bot_logs (bot_id, level, message, details)
+            VALUES (bot_record.id, 'info', 'Processing bot - calling edge function', 
+                    jsonb_build_object(
+                        'emails_sent', bot_record.emails_sent, 
+                        'total_recipients', bot_record.total_recipients,
+                        'rate_limit_seconds', seconds_between_emails,
+                        'time_since_last_activity', time_since_last_activity
+                    ));
+            
             -- Call the edge function to send the next email
             PERFORM net.http_post(
                 url := 'https://kwsmszwrlmfnkkfavycb.supabase.co/functions/v1/process-email-bot',
                 headers := '{"Content-Type": "application/json", "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3c21zendybG1mbmtrZmF2eWNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2NDY3MTUsImV4cCI6MjA2NjIyMjcxNX0.ogdGNsaD3PdQzZWukL_X63pIPpPcXsC-rsS8LBQAHyc"}'::jsonb,
                 body := jsonb_build_object('bot_id', bot_record.id)
             );
+        ELSE
+            -- Log rate limiting
+            INSERT INTO email_bot_logs (bot_id, level, message, details)
+            VALUES (bot_record.id, 'info', 'Rate limited - waiting for next cycle', 
+                    jsonb_build_object(
+                        'seconds_between_emails', seconds_between_emails,
+                        'time_since_last_activity', time_since_last_activity,
+                        'emails_per_minute', bot_record.emails_per_minute
+                    ));
         END IF;
     END LOOP;
 END;

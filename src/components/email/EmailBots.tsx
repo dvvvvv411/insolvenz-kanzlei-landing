@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Progress } from '@/components/ui/progress';
 import { toast } from '@/components/ui/use-toast';
 import { Plus, Play, Pause, Square, Bot, Activity, Clock, Mail, AlertCircle, CheckCircle, Upload, Users } from 'lucide-react';
+import EmailBotTester from './EmailBotTester';
 
 interface EmailBot {
   id: string;
@@ -179,15 +180,13 @@ const EmailBots = () => {
         case 'start':
           updateData.status = 'running';
           updateData.started_at = new Date().toISOString();
-          updateData.last_activity_at = new Date().toISOString();
+          // Don't set last_activity_at here - let the first processing cycle handle it
           break;
         case 'pause':
           updateData.status = 'paused';
-          updateData.last_activity_at = new Date().toISOString();
           break;
         case 'stop':
           updateData.status = 'idle';
-          updateData.last_activity_at = new Date().toISOString();
           break;
       }
 
@@ -381,141 +380,148 @@ const EmailBots = () => {
           const progress = calculateProgress(bot);
           
           return (
-            <Card key={bot.id}>
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-2">
-                      {getStatusIcon(bot.status)}
-                      <CardTitle className="text-lg">{bot.name}</CardTitle>
-                      <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(bot.status)}`}>
-                        {bot.status.charAt(0).toUpperCase() + bot.status.slice(1)}
-                      </span>
+            <div key={bot.id} className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2 mb-2">
+                        {getStatusIcon(bot.status)}
+                        <CardTitle className="text-lg">{bot.name}</CardTitle>
+                        <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(bot.status)}`}>
+                          {bot.status.charAt(0).toUpperCase() + bot.status.slice(1)}
+                        </span>
+                      </div>
+                      <CardDescription>
+                        Template: {template?.name} | Recipients: {getRecipientSourceName(bot)}
+                      </CardDescription>
                     </div>
-                    <CardDescription>
-                      Template: {template?.name} | Recipients: {getRecipientSourceName(bot)}
-                    </CardDescription>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    {bot.status === 'idle' && (
-                      <Button
-                        size="sm"
-                        onClick={() => handleBotAction(bot.id, 'start')}
-                        className="flex items-center space-x-1"
-                      >
-                        <Play className="h-3 w-3" />
-                        <span>Start</span>
-                      </Button>
-                    )}
-                    {bot.status === 'running' && (
-                      <>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleBotAction(bot.id, 'pause')}
-                          className="flex items-center space-x-1"
-                        >
-                          <Pause className="h-3 w-3" />
-                          <span>Pause</span>
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => handleBotAction(bot.id, 'stop')}
-                          className="flex items-center space-x-1"
-                        >
-                          <Square className="h-3 w-3" />
-                          <span>Stop</span>
-                        </Button>
-                      </>
-                    )}
-                    {bot.status === 'paused' && (
-                      <>
+                    <div className="flex items-center space-x-2">
+                      {bot.status === 'idle' && (
                         <Button
                           size="sm"
                           onClick={() => handleBotAction(bot.id, 'start')}
                           className="flex items-center space-x-1"
                         >
                           <Play className="h-3 w-3" />
-                          <span>Resume</span>
+                          <span>Start</span>
                         </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => handleBotAction(bot.id, 'stop')}
-                          className="flex items-center space-x-1"
-                        >
-                          <Square className="h-3 w-3" />
-                          <span>Stop</span>
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {/* Progress Bar */}
-                  <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-medium">Progress</span>
-                      <span className="text-sm text-gray-600">
-                        {bot.emails_sent} / {bot.total_recipients} ({progress}%)
-                      </span>
+                      )}
+                      {bot.status === 'running' && (
+                        <>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleBotAction(bot.id, 'pause')}
+                            className="flex items-center space-x-1"
+                          >
+                            <Pause className="h-3 w-3" />
+                            <span>Pause</span>
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => handleBotAction(bot.id, 'stop')}
+                            className="flex items-center space-x-1"
+                          >
+                            <Square className="h-3 w-3" />
+                            <span>Stop</span>
+                          </Button>
+                        </>
+                      )}
+                      {bot.status === 'paused' && (
+                        <>
+                          <Button
+                            size="sm"
+                            onClick={() => handleBotAction(bot.id, 'start')}
+                            className="flex items-center space-x-1"
+                          >
+                            <Play className="h-3 w-3" />
+                            <span>Resume</span>
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => handleBotAction(bot.id, 'stop')}
+                            className="flex items-center space-x-1"
+                          >
+                            <Square className="h-3 w-3" />
+                            <span>Stop</span>
+                          </Button>
+                        </>
+                      )}
                     </div>
-                    <Progress value={progress} className="w-full" />
                   </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {/* Progress Bar */}
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm font-medium">Progress</span>
+                        <span className="text-sm text-gray-600">
+                          {bot.emails_sent} / {bot.total_recipients} ({progress}%)
+                        </span>
+                      </div>
+                      <Progress value={progress} className="w-full" />
+                    </div>
 
-                  {/* Stats Grid */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                    <div className="flex items-center space-x-2">
-                      <Mail className="h-4 w-4 text-blue-500" />
-                      <div>
-                        <p className="text-gray-500">Sent</p>
-                        <p className="font-semibold">{bot.emails_sent}</p>
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                      <div className="flex items-center space-x-2">
+                        <Mail className="h-4 w-4 text-blue-500" />
+                        <div>
+                          <p className="text-gray-500">Sent</p>
+                          <p className="font-semibold">{bot.emails_sent}</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <AlertCircle className="h-4 w-4 text-red-500" />
-                      <div>
-                        <p className="text-gray-500">Failed</p>
-                        <p className="font-semibold">{bot.emails_failed}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Clock className="h-4 w-4 text-green-500" />
-                      <div>
-                        <p className="text-gray-500">Rate</p>
-                        <p className="font-semibold">{bot.emails_per_minute}/min</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Activity className="h-4 w-4 text-purple-500" />
-                      <div>
-                        <p className="text-gray-500">Last Activity</p>
-                        <p className="font-semibold">
-                          {bot.last_activity_at 
-                            ? new Date(bot.last_activity_at).toLocaleTimeString()
-                            : 'Never'
-                          }
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Error Message */}
-                  {bot.error_message && (
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-3">
                       <div className="flex items-center space-x-2">
                         <AlertCircle className="h-4 w-4 text-red-500" />
-                        <span className="text-sm font-medium text-red-800">Error</span>
+                        <div>
+                          <p className="text-gray-500">Failed</p>
+                          <p className="font-semibold">{bot.emails_failed}</p>
+                        </div>
                       </div>
-                      <p className="text-sm text-red-700 mt-1">{bot.error_message}</p>
+                      <div className="flex items-center space-x-2">
+                        <Clock className="h-4 w-4 text-green-500" />
+                        <div>
+                          <p className="text-gray-500">Rate</p>
+                          <p className="font-semibold">{bot.emails_per_minute}/min</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Activity className="h-4 w-4 text-purple-500" />
+                        <div>
+                          <p className="text-gray-500">Last Activity</p>
+                          <p className="font-semibold">
+                            {bot.last_activity_at 
+                              ? new Date(bot.last_activity_at).toLocaleTimeString()
+                              : 'Never'
+                            }
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+
+                    {/* Error Message */}
+                    {bot.error_message && (
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                        <div className="flex items-center space-x-2">
+                          <AlertCircle className="h-4 w-4 text-red-500" />
+                          <span className="text-sm font-medium text-red-800">Error</span>
+                        </div>
+                        <p className="text-sm text-red-700 mt-1">{bot.error_message}</p>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+              
+              {/* Add testing component for running bots */}
+              {(bot.status === 'running' || bot.status === 'idle') && (
+                <EmailBotTester botId={bot.id} botName={bot.name} />
+              )}
+            </div>
           );
         })}
       </div>
