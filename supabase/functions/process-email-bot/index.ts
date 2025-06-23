@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.50.0";
 import { Resend } from "npm:resend@2.0.0";
@@ -14,6 +15,26 @@ interface ProcessBotRequest {
 const supabaseUrl = "https://kwsmszwrlmfnkkfavycb.supabase.co";
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+// Helper function to convert ArrayBuffer to base64 efficiently
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  try {
+    const bytes = new Uint8Array(buffer);
+    const chunkSize = 1024 * 1024; // Process 1MB chunks to avoid stack overflow
+    let result = '';
+    
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      const chunk = bytes.slice(i, i + chunkSize);
+      const chunkString = String.fromCharCode.apply(null, Array.from(chunk));
+      result += btoa(chunkString);
+    }
+    
+    return result;
+  } catch (error) {
+    console.error('Error converting ArrayBuffer to base64:', error);
+    throw new Error(`Base64 conversion failed: ${error.message}`);
+  }
+}
 
 const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
@@ -249,40 +270,61 @@ const handler = async (req: Request): Promise<Response> => {
         console.log(`📎 Adding PDF attachment: ${template.pdf_file_name}`);
         
         try {
-          // Download the PDF from Supabase Storage
+          // Validate file size before processing (max 25MB for Resend)
+          const maxFileSize = 25 * 1024 * 1024; // 25MB in bytes
+          if (template.pdf_file_size && template.pdf_file_size > maxFileSize) {
+            throw new Error(`PDF file too large: ${template.pdf_file_size} bytes (max: ${maxFileSize} bytes)`);
+          }
+
+          // Download the PDF from Supabase Storage with timeout
+          console.log(`⬇️ Downloading PDF from storage: ${template.pdf_file_path}`);
           const { data: pdfData, error: storageError } = await supabase.storage
             .from('email-pdfs')
             .download(template.pdf_file_path);
 
           if (storageError) {
-            console.error('❌ Error downloading PDF from storage:', storageError);
-            await logToDB(bot_id, 'error', `Failed to download PDF attachment: ${template.pdf_file_name}`, {
-              recipient: recipientEmail,
-              pdf_path: template.pdf_file_path,
-              error: storageError.message
-            });
-          } else if (pdfData) {
-            // Convert blob to base64
-            const arrayBuffer = await pdfData.arrayBuffer();
-            const base64Content = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
-            
-            emailData.attachments = [
-              {
-                filename: template.pdf_file_name,
-                content: base64Content,
-                type: 'application/pdf',
-                disposition: 'attachment'
-              }
-            ];
-            
-            console.log(`✅ PDF attachment added successfully: ${template.pdf_file_name}`);
+            console.error('❌ Storage download error:', storageError);
+            throw new Error(`Storage download failed: ${storageError.message}`);
           }
-        } catch (attachmentError) {
-          console.error('❌ Error processing PDF attachment:', attachmentError);
-          await logToDB(bot_id, 'error', `Error processing PDF attachment: ${template.pdf_file_name}`, {
+
+          if (!pdfData) {
+            throw new Error('PDF data is empty or null');
+          }
+
+          console.log(`✅ PDF downloaded successfully, size: ${pdfData.size} bytes`);
+
+          // Convert blob to base64 using the improved method
+          const arrayBuffer = await pdfData.arrayBuffer();
+          console.log(`🔄 Converting ${arrayBuffer.byteLength} bytes to base64...`);
+          
+          const base64Content = arrayBufferToBase64(arrayBuffer);
+          console.log(`✅ Base64 conversion completed, length: ${base64Content.length}`);
+          
+          emailData.attachments = [
+            {
+              filename: template.pdf_file_name,
+              content: base64Content,
+              type: 'application/pdf',
+              disposition: 'attachment'
+            }
+          ];
+          
+          console.log(`✅ PDF attachment prepared successfully: ${template.pdf_file_name}`);
+
+        } catch (attachmentError: any) {
+          console.error('❌ PDF attachment processing failed:', attachmentError);
+          
+          // Log the attachment error but don't fail the entire email
+          await logToDB(bot_id, 'warning', `PDF attachment failed for ${recipientEmail}: ${attachmentError.message}`, {
             recipient: recipientEmail,
-            error: attachmentError.message
+            pdf_file_name: template.pdf_file_name,
+            pdf_file_path: template.pdf_file_path,
+            error: attachmentError.message,
+            error_stack: attachmentError.stack
           });
+
+          // Continue without attachment - this is a business decision
+          console.log(`⚠️ Continuing email send without PDF attachment due to error: ${attachmentError.message}`);
         }
       }
 
@@ -307,7 +349,7 @@ const handler = async (req: Request): Promise<Response> => {
         subject: emailSubject,
         resend_id: emailResponse.data?.id,
         progress: `${bot.emails_sent + 1}/${bot.total_recipients}`,
-        has_attachment: !!template.pdf_file_name
+        has_attachment: !!template.pdf_file_name && !!emailData.attachments
       });
 
       // Calculate delay for next email based on rate limit
@@ -332,7 +374,7 @@ const handler = async (req: Request): Promise<Response> => {
         total_recipients: bot.total_recipients,
         progress: `${newEmailsSent}/${bot.total_recipients}`,
         next_email_in_seconds: newEmailsSent < bot.total_recipients ? secondsBetweenEmails : null,
-        has_attachment: !!template.pdf_file_name
+        has_attachment: !!template.pdf_file_name && !!emailData.attachments
       }), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -356,7 +398,8 @@ const handler = async (req: Request): Promise<Response> => {
         recipient: recipientEmail,
         error: emailError.message,
         subject: emailSubject,
-        error_code: emailError.code
+        error_code: emailError.code,
+        error_stack: emailError.stack
       });
 
       return new Response(JSON.stringify({ 
