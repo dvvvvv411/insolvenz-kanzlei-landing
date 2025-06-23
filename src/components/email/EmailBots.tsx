@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -73,7 +72,14 @@ const EmailBots = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setBots(data || []);
+      
+      // Ensure recipient_source_type is properly typed
+      const typedBots = (data || []).map(bot => ({
+        ...bot,
+        recipient_source_type: bot.recipient_source_type as 'list' | 'batch'
+      }));
+      
+      setBots(typedBots);
     } catch (error) {
       console.error('Error fetching bots:', error);
       toast({
