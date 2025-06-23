@@ -1,9 +1,11 @@
+
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CTASection from '@/components/CTASection';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { CheckCircle, Shield, Users, FileText, Clock, Award, MapPin, ArrowRight, Star, Briefcase } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Index = () => {
   return (
@@ -68,9 +70,11 @@ const Index = () => {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="bg-white text-primary hover:bg-gray-100 shadow-lg group">
-                  Kostenlose Erstberatung
-                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                <Button size="lg" className="bg-white text-primary hover:bg-gray-100 shadow-lg group" asChild>
+                  <Link to="/erstberatung">
+                    Kostenlose Erstberatung
+                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Link>
                 </Button>
                 <Button size="lg" variant="outline" className="border-2 border-white text-law-blue-900 hover:bg-white hover:text-law-blue-900 transition-all duration-300">
                   +49 69 94321306
@@ -182,9 +186,11 @@ const Index = () => {
               </div>
               
               <div className="mt-8">
-                <Button size="lg" className="group">
-                  Kostenlose Beratung anfragen
-                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                <Button size="lg" className="group" asChild>
+                  <Link to="/erstberatung">
+                    Kostenlose Beratung anfragen
+                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Link>
                 </Button>
               </div>
             </div>
@@ -310,9 +316,11 @@ const Index = () => {
               </div>
               
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="group">
-                  Termin vereinbaren
-                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                <Button size="lg" className="group" asChild>
+                  <Link to="/erstberatung">
+                    Termin vereinbaren
+                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Link>
                 </Button>
                 <Button size="lg" variant="outline">
                   Mehr über uns erfahren

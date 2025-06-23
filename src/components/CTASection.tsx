@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Phone, Mail, ArrowRight, Shield, Clock } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const CTASection = () => {
   return (
@@ -85,9 +86,11 @@ const CTASection = () => {
           </div>
         </div>
 
-        <Button size="lg" className="bg-white text-primary hover:bg-gray-100 shadow-xl group text-lg px-8 py-4">
-          Jetzt Termin vereinbaren
-          <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+        <Button size="lg" className="bg-white text-primary hover:bg-gray-100 shadow-xl group text-lg px-8 py-4" asChild>
+          <Link to="/erstberatung">
+            Jetzt Termin vereinbaren
+            <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+          </Link>
         </Button>
       </div>
     </section>
