@@ -73,10 +73,11 @@ const EmailBots = () => {
 
       if (error) throw error;
       
-      // Ensure recipient_source_type is properly typed
+      // Ensure recipient_source_type and status are properly typed
       const typedBots = (data || []).map(bot => ({
         ...bot,
-        recipient_source_type: bot.recipient_source_type as 'list' | 'batch'
+        recipient_source_type: bot.recipient_source_type as 'list' | 'batch',
+        status: bot.status as 'idle' | 'running' | 'paused' | 'completed' | 'failed'
       }));
       
       setBots(typedBots);
