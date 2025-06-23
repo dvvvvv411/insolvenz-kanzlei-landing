@@ -16,7 +16,7 @@ const Insolvenzrecht = () => {
     },
     {
       title: "Verbraucherinsolvenz",
-      description: "Begleitung von Privatpersonen durch das Insolvenzverfahren zur Schuldenbefreiung",
+      description: "Begleitung von Privatpersonen durch das Insolvenzverfahren zur Schuldenbefriedigung",
       features: ["Außergerichtliche Einigung", "Verfahrensantrag", "Wohlverhaltensperiode", "Restschuldbefreiung"]
     },
     {
@@ -63,7 +63,7 @@ const Insolvenzrecht = () => {
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Link>
                   </Button>
-                  <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-law-blue-900">
+                  <Button size="lg" variant="outline" className="border-2 border-white text-law-blue-900 bg-white hover:bg-gray-100 hover:text-law-blue-900">
                     +49 69 94321306
                   </Button>
                 </div>
@@ -175,7 +175,7 @@ const Insolvenzrecht = () => {
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-law-blue-900" asChild>
+              <Button size="lg" variant="outline" className="border-2 border-white text-law-blue-900 bg-white hover:bg-gray-100 hover:text-law-blue-900" asChild>
                 <Link to="/kontakt">
                   Kontakt aufnehmen
                 </Link>
