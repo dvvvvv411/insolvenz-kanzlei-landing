@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/components/ui/use-toast';
-import { Plus, Play, Pause, BarChart } from 'lucide-react';
+import { Plus, Play, Pause, BarChart, Users, Upload } from 'lucide-react';
 
 interface EmailCampaign {
   id: string;
@@ -31,12 +31,22 @@ interface EmailTemplate {
 interface RecipientList {
   id: string;
   name: string;
+  type: 'list';
 }
+
+interface EmailBatch {
+  id: string;
+  name: string;
+  valid_emails: number;
+  type: 'batch';
+}
+
+type RecipientSource = RecipientList | EmailBatch;
 
 const EmailCampaigns = () => {
   const [campaigns, setCampaigns] = useState<EmailCampaign[]>([]);
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
-  const [recipientLists, setRecipientLists] = useState<RecipientList[]>([]);
+  const [recipientSources, setRecipientSources] = useState<RecipientSource[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -52,19 +62,27 @@ const EmailCampaigns = () => {
 
   const fetchData = async () => {
     try {
-      const [campaignsResult, templatesResult, listsResult] = await Promise.all([
+      const [campaignsResult, templatesResult, listsResult, batchesResult] = await Promise.all([
         supabase.from('email_campaigns').select('*').order('created_at', { ascending: false }),
         supabase.from('email_templates').select('id, name, subject'),
-        supabase.from('recipient_lists').select('id, name')
+        supabase.from('recipient_lists').select('id, name'),
+        supabase.from('email_batches').select('id, name, valid_emails')
       ]);
 
       if (campaignsResult.error) throw campaignsResult.error;
       if (templatesResult.error) throw templatesResult.error;
       if (listsResult.error) throw listsResult.error;
+      if (batchesResult.error) throw batchesResult.error;
 
       setCampaigns(campaignsResult.data || []);
       setTemplates(templatesResult.data || []);
-      setRecipientLists(listsResult.data || []);
+      
+      // Combine recipient lists and email batches
+      const sources: RecipientSource[] = [
+        ...(listsResult.data || []).map(list => ({ ...list, type: 'list' as const })),
+        ...(batchesResult.data || []).map(batch => ({ ...batch, type: 'batch' as const }))
+      ];
+      setRecipientSources(sources);
     } catch (error) {
       console.error('Error fetching data:', error);
       toast({
@@ -81,17 +99,26 @@ const EmailCampaigns = () => {
     e.preventDefault();
     
     try {
-      // Get recipient count
-      const { count } = await supabase
-        .from('recipients')
-        .select('*', { count: 'exact', head: true })
-        .eq('list_id', formData.recipient_list_id);
+      let recipientCount = 0;
+      const selectedSource = recipientSources.find(source => source.id === formData.recipient_list_id);
+      
+      if (selectedSource?.type === 'batch') {
+        // For email batches, use the valid_emails count
+        recipientCount = (selectedSource as EmailBatch).valid_emails;
+      } else {
+        // For recipient lists, count from recipients table
+        const { count } = await supabase
+          .from('recipients')
+          .select('*', { count: 'exact', head: true })
+          .eq('list_id', formData.recipient_list_id);
+        recipientCount = count || 0;
+      }
 
       const { error } = await supabase
         .from('email_campaigns')
         .insert([{
           ...formData,
-          total_recipients: count || 0,
+          total_recipients: recipientCount,
           scheduled_at: formData.scheduled_at || null
         }]);
 
@@ -160,6 +187,16 @@ const EmailCampaigns = () => {
     }
   };
 
+  const getRecipientSourceName = (campaign: EmailCampaign) => {
+    const source = recipientSources.find(s => s.id === campaign.recipient_list_id);
+    if (!source) return 'Unknown';
+    
+    if (source.type === 'batch') {
+      return `${source.name} (Email Batch)`;
+    }
+    return `${source.name} (Recipient List)`;
+  };
+
   if (isLoading) {
     return <div className="text-center py-8">Loading campaigns...</div>;
   }
@@ -211,18 +248,31 @@ const EmailCampaigns = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium mb-2">Recipient List</label>
+                <label className="block text-sm font-medium mb-2">Recipients</label>
                 <Select 
                   value={formData.recipient_list_id} 
                   onValueChange={(value) => setFormData({ ...formData, recipient_list_id: value })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a recipient list" />
+                    <SelectValue placeholder="Select recipients" />
                   </SelectTrigger>
                   <SelectContent>
-                    {recipientLists.map((list) => (
-                      <SelectItem key={list.id} value={list.id}>
-                        {list.name}
+                    {recipientSources.map((source) => (
+                      <SelectItem key={source.id} value={source.id}>
+                        <div className="flex items-center space-x-2">
+                          {source.type === 'batch' ? (
+                            <Upload className="h-4 w-4 text-blue-500" />
+                          ) : (
+                            <Users className="h-4 w-4 text-green-500" />
+                          )}
+                          <span>
+                            {source.name} 
+                            {source.type === 'batch' 
+                              ? ` (${(source as EmailBatch).valid_emails} emails)`
+                              : ' (Recipient List)'
+                            }
+                          </span>
+                        </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -259,7 +309,6 @@ const EmailCampaigns = () => {
       <div className="space-y-4">
         {campaigns.map((campaign) => {
           const template = templates.find(t => t.id === campaign.template_id);
-          const list = recipientLists.find(l => l.id === campaign.recipient_list_id);
           
           return (
             <Card key={campaign.id}>
@@ -268,7 +317,7 @@ const EmailCampaigns = () => {
                   <div>
                     <CardTitle className="text-lg">{campaign.name}</CardTitle>
                     <CardDescription className="mt-1">
-                      Template: {template?.name} | Recipients: {list?.name}
+                      Template: {template?.name} | Recipients: {getRecipientSourceName(campaign)}
                     </CardDescription>
                   </div>
                   <div className="flex items-center space-x-2">
