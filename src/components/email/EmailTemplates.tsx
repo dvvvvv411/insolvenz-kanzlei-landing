@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from '@/components/ui/use-toast';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, Code, Type } from 'lucide-react';
 
 interface EmailTemplate {
   id: string;
@@ -22,6 +23,8 @@ const EmailTemplates = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState<EmailTemplate | null>(null);
+  const [isHtmlMode, setIsHtmlMode] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     subject: '',
@@ -90,6 +93,7 @@ const EmailTemplates = () => {
       setFormData({ name: '', subject: '', content: '' });
       setShowForm(false);
       setEditingTemplate(null);
+      setIsHtmlMode(false);
       fetchTemplates();
     } catch (error) {
       console.error('Error saving template:', error);
@@ -142,7 +146,16 @@ const EmailTemplates = () => {
     setFormData({ name: '', subject: '', content: '' });
     setShowForm(false);
     setEditingTemplate(null);
+    setIsHtmlMode(false);
   };
+
+  const toggleHtmlMode = () => {
+    setIsHtmlMode(!isHtmlMode);
+  };
+
+  useEffect(() => {
+    fetchTemplates();
+  }, []);
 
   if (isLoading) {
     return <div className="text-center py-8">Loading templates...</div>;
@@ -186,14 +199,77 @@ const EmailTemplates = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium mb-2">Email Content</label>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-sm font-medium">Email Content</label>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={toggleHtmlMode}
+                      className="flex items-center space-x-1"
+                    >
+                      {isHtmlMode ? <Type className="h-4 w-4" /> : <Code className="h-4 w-4" />}
+                      <span>{isHtmlMode ? 'Text Mode' : 'HTML Mode'}</span>
+                    </Button>
+                    
+                    <Dialog open={showPreview} onOpenChange={setShowPreview}>
+                      <DialogTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="flex items-center space-x-1"
+                        >
+                          <Eye className="h-4 w-4" />
+                          <span>Preview</span>
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                        <DialogHeader>
+                          <DialogTitle>Email Preview</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div>
+                            <h4 className="font-medium text-sm text-gray-600 mb-1">Subject:</h4>
+                            <p className="text-lg font-medium">{formData.subject || 'No subject'}</p>
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-sm text-gray-600 mb-2">Content:</h4>
+                            <div className="border rounded-lg p-4 bg-white min-h-[300px]">
+                              {isHtmlMode ? (
+                                <div 
+                                  dangerouslySetInnerHTML={{ __html: formData.content || '<p>No content</p>' }}
+                                  className="prose max-w-none"
+                                />
+                              ) : (
+                                <div className="whitespace-pre-wrap">
+                                  {formData.content || 'No content'}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </div>
                 <Textarea
                   value={formData.content}
                   onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  placeholder="Enter your email content here..."
-                  rows={10}
+                  placeholder={isHtmlMode ? 
+                    "Enter your HTML content here...\n\nExample:\n<h1>Welcome!</h1>\n<p>Thank you for joining us.</p>" : 
+                    "Enter your email content here..."
+                  }
+                  rows={isHtmlMode ? 15 : 10}
+                  className={isHtmlMode ? "font-mono text-sm" : ""}
                   required
                 />
+                {isHtmlMode && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    You can use HTML tags like &lt;h1&gt;, &lt;p&gt;, &lt;strong&gt;, &lt;em&gt;, &lt;a&gt;, etc.
+                  </p>
+                )}
               </div>
               
               <div className="flex space-x-2">
