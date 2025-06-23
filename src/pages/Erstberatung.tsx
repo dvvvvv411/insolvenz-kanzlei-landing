@@ -1,3 +1,4 @@
+
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -52,20 +53,8 @@ const Erstberatung = () => {
       
       <div className="pt-16">
         {/* Hero Section */}
-        <section className="relative min-h-[60vh] bg-gradient-to-r from-law-blue-900 via-law-blue-800 to-law-blue-700 text-white py-20 overflow-hidden">
-          {/* Background Image */}
-          <div 
-            className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
-            style={{
-              backgroundImage: `url('https://i.imgur.com/niSh1Um.jpeg')`,
-              opacity: 0.3
-            }}
-          />
-          
-          {/* Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-law-blue-900/80 via-law-blue-800/70 to-law-blue-700/80" />
-          
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <section className="bg-gradient-to-r from-law-blue-900 via-law-blue-800 to-law-blue-700 text-white py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <Badge className="mb-4 bg-law-blue-100 text-law-blue-900">Kostenlos</Badge>
               <h1 className="text-4xl md:text-6xl font-bold mb-6">
