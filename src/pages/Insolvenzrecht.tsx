@@ -32,8 +32,8 @@ const Insolvenzrecht = () => {
   ];
 
   const expertise = [
-    { icon: Clock, title: "25+ Jahre Erfahrung", description: "Langjährige Expertise in der Insolvenzverwaltung" },
-    { icon: Users, title: "500+ Verfahren", description: "Erfolgreich abgewickelte Insolvenzverfahren" },
+    { icon: Clock, title: "10+ Jahre Erfahrung", description: "Bewährte Expertise in der Insolvenzverwaltung" },
+    { icon: Users, title: "200+ Mandanten", description: "Erfolgreich betreute Insolvenzverfahren" },
     { icon: Shield, title: "Zertifiziert", description: "Zugelassene Insolvenzverwalter" },
     { icon: Scale, title: "Faire Abwicklung", description: "Ausgewogene Interessenvertretung aller Beteiligten" }
   ];

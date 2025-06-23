@@ -11,7 +11,7 @@ const UeberUns = () => {
     {
       icon: Scale,
       title: "Kompetenz",
-      description: "25+ Jahre Erfahrung in komplexen Rechtsangelegenheiten mit nachweislichen Erfolgen"
+      description: "10+ Jahre Erfahrung in komplexen Rechtsangelegenheiten mit nachweislichen Erfolgen"
     },
     {
       icon: Heart,
@@ -31,8 +31,8 @@ const UeberUns = () => {
   ];
 
   const facts = [
-    { number: "25+", label: "Jahre Erfahrung", icon: Clock },
-    { number: "500+", label: "Erfolgreiche Verfahren", icon: Award },
+    { number: "10+", label: "Jahre Erfahrung", icon: Clock },
+    { number: "200+", label: "Erfolgreiche Mandanten", icon: Award },
     { number: "2", label: "Spezialisierte Partner", icon: Users },
     { number: "100%", label: "Mandantenzufriedenheit", icon: Heart }
   ];
@@ -97,7 +97,7 @@ const UeberUns = () => {
                   Ihre Rechtsanwaltskanzlei in Frankfurt am Main
                 </h2>
                 <p className="text-lg text-gray-600 mb-6">
-                  Seit über 25 Jahren stehen wir unseren Mandanten mit kompetenter rechtlicher Beratung zur Seite. 
+                  Seit über 10 Jahren stehen wir unseren Mandanten mit kompetenter rechtlicher Beratung zur Seite. 
                   Als spezialisierte Rechtsanwaltskanzlei haben wir uns auf die Bereiche Insolvenzrecht, 
                   Gesellschaftsrecht, Vertragsrecht und Arbeitsrecht fokussiert.
                 </p>

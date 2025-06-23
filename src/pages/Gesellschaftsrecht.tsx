@@ -56,7 +56,7 @@ const Gesellschaftsrecht = () => {
                 </h1>
                 <p className="text-xl text-law-blue-100 mb-8">
                   Von der Unternehmensgründung bis zur komplexen M&A-Transaktion - 
-                  wir begleiten Sie bei allen gesellschaftsrechtlichen Angelegenheiten.
+                  wir begleiten Sie bei allen gesellschaftsrechtlichen Angelegenheiten in Hessen.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button size="lg" variant="secondary" asChild>
@@ -148,8 +148,8 @@ const Gesellschaftsrecht = () => {
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-law-blue-100 rounded-full mb-4">
                   <TrendingUp className="w-8 h-8 text-law-blue-900" />
                 </div>
-                <h3 className="text-xl font-semibold text-law-blue-900 mb-3">25+ Jahre Erfahrung</h3>
-                <p className="text-gray-600">Langjährige Expertise im Gesellschaftsrecht</p>
+                <h3 className="text-xl font-semibold text-law-blue-900 mb-3">10+ Jahre Erfahrung</h3>
+                <p className="text-gray-600">Bewährte Expertise im Gesellschaftsrecht</p>
               </div>
               <div className="text-center">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-law-blue-100 rounded-full mb-4">

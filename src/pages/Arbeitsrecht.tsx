@@ -64,7 +64,7 @@ const Arbeitsrecht = () => {
                   Arbeitsrecht für Arbeitgeber & Arbeitnehmer
                 </h1>
                 <p className="text-xl text-law-blue-100 mb-8">
-                  Kompetente Beratung und Vertretung in allen arbeitsrechtlichen Angelegenheiten. 
+                  Kompetente Beratung und Vertretung in allen arbeitsrechtlichen Angelegenheiten in Hessen. 
                   Wir setzen uns für Ihre Rechte ein - auf beiden Seiten des Arbeitsverhältnisses.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
@@ -232,7 +232,7 @@ const Arbeitsrecht = () => {
                   <FileText className="w-8 h-8 text-law-blue-900" />
                 </div>
                 <h3 className="text-xl font-semibold text-law-blue-900 mb-3">Erfahren</h3>
-                <p className="text-gray-600">25+ Jahre Erfahrung im Arbeitsrecht</p>
+                <p className="text-gray-600">10+ Jahre Erfahrung im Arbeitsrecht</p>
               </div>
               <div className="text-center">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-law-blue-100 rounded-full mb-4">
