@@ -12,7 +12,6 @@ interface EmailSettingsData {
   resend_api_key: string | null;
   from_email: string;
   from_name: string;
-  rate_limit: number;
   created_at: string;
   updated_at: string;
 }
@@ -24,8 +23,7 @@ const EmailSettings = () => {
   const [formData, setFormData] = useState({
     resend_api_key: '',
     from_email: '',
-    from_name: '',
-    rate_limit: 100
+    from_name: ''
   });
 
   useEffect(() => {
@@ -48,8 +46,7 @@ const EmailSettings = () => {
         setFormData({
           resend_api_key: data.resend_api_key || '',
           from_email: data.from_email,
-          from_name: data.from_name,
-          rate_limit: data.rate_limit
+          from_name: data.from_name
         });
       }
     } catch (error) {
@@ -185,23 +182,6 @@ const EmailSettings = () => {
                   />
                 </div>
               </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Rate Limit (emails per hour)
-                </label>
-                <Input
-                  type="number"
-                  value={formData.rate_limit}
-                  onChange={(e) => setFormData({ ...formData, rate_limit: parseInt(e.target.value) || 100 })}
-                  min={1}
-                  max={1000}
-                  placeholder="100"
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Maximum number of emails to send per hour
-                </p>
-              </div>
             </div>
 
             <div className="flex items-center justify-between pt-4 border-t">
@@ -229,7 +209,7 @@ const EmailSettings = () => {
           <p>• You need to verify your domain in Resend before sending emails</p>
           <p>• The from email must match a verified domain</p>
           <p>• Free Resend accounts have a daily sending limit</p>
-          <p>• Rate limiting helps prevent hitting API limits</p>
+          <p>• Rate limiting is configured per email bot in the Bots tab</p>
           <p>• Test your settings with a small campaign first</p>
         </CardContent>
       </Card>

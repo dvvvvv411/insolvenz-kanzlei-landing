@@ -299,7 +299,6 @@ export type Database = {
           from_email: string
           from_name: string
           id: string
-          rate_limit: number
           resend_api_key: string | null
           updated_at: string
         }
@@ -308,7 +307,6 @@ export type Database = {
           from_email?: string
           from_name?: string
           id?: string
-          rate_limit?: number
           resend_api_key?: string | null
           updated_at?: string
         }
@@ -317,7 +315,6 @@ export type Database = {
           from_email?: string
           from_name?: string
           id?: string
-          rate_limit?: number
           resend_api_key?: string | null
           updated_at?: string
         }
