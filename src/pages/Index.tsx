@@ -1,4 +1,3 @@
-
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CTASection from '@/components/CTASection';
@@ -22,7 +21,7 @@ const Index = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-15"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1487958449943-2429e8be8625?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')`
+            backgroundImage: `url('https://i.imgur.com/niSh1Um.jpeg')`
           }}
         />
         
