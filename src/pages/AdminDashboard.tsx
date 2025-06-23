@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/components/ui/use-toast';
-import { LogOut, User, Calendar, Shield } from 'lucide-react';
+import { LogOut, User, Calendar, Shield, Mail } from 'lucide-react';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 
 interface AdminUser {
@@ -203,6 +202,20 @@ const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Button 
+                variant="outline" 
+                className="h-auto p-4 flex flex-col items-start"
+                onClick={() => navigate('/admin/email')}
+              >
+                <div className="flex items-center space-x-2 mb-2">
+                  <Mail className="h-5 w-5 text-blue-600" />
+                  <h3 className="font-medium">Email Management</h3>
+                </div>
+                <p className="text-sm text-gray-600 text-left">
+                  Create templates, manage recipients, and send email campaigns
+                </p>
+              </Button>
+
               <Button 
                 variant="outline" 
                 className="h-auto p-4 flex flex-col items-start"
