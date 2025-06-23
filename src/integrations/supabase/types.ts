@@ -33,6 +33,74 @@ export type Database = {
         }
         Relationships: []
       }
+      batch_emails: {
+        Row: {
+          batch_id: string
+          created_at: string
+          email: string
+          error_message: string | null
+          id: string
+          is_valid: boolean
+        }
+        Insert: {
+          batch_id: string
+          created_at?: string
+          email: string
+          error_message?: string | null
+          id?: string
+          is_valid?: boolean
+        }
+        Update: {
+          batch_id?: string
+          created_at?: string
+          email?: string
+          error_message?: string | null
+          id?: string
+          is_valid?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "batch_emails_batch_id_fkey"
+            columns: ["batch_id"]
+            isOneToOne: false
+            referencedRelation: "email_batches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_batches: {
+        Row: {
+          created_at: string
+          file_name: string
+          id: string
+          invalid_emails: number
+          name: string
+          total_emails: number
+          updated_at: string
+          valid_emails: number
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          id?: string
+          invalid_emails?: number
+          name: string
+          total_emails?: number
+          updated_at?: string
+          valid_emails?: number
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          id?: string
+          invalid_emails?: number
+          name?: string
+          total_emails?: number
+          updated_at?: string
+          valid_emails?: number
+        }
+        Relationships: []
+      }
       email_campaigns: {
         Row: {
           created_at: string
