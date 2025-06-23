@@ -69,7 +69,7 @@ const Erstberatung = () => {
                   <Phone className="w-4 h-4 mr-2" />
                   +49 69 94321306
                 </Button>
-                <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-law-blue-900" asChild>
+                <Button size="lg" variant="outline" className="border-2 border-white text-law-blue-900 bg-white hover:bg-gray-100 hover:text-law-blue-900" asChild>
                   <Link to="/kontakt">
                     Online Termin buchen
                   </Link>
@@ -185,7 +185,7 @@ const Erstberatung = () => {
                   <p className="text-gray-600 mb-4">
                     Rufen Sie uns direkt an und vereinbaren Sie Ihren Termin
                   </p>
-                  <Button asChild>
+                  <Button className="bg-law-blue-900 text-white hover:bg-law-blue-800" asChild>
                     <a href="tel:+496994321306">
                       +49 69 94321306
                     </a>
@@ -245,11 +245,11 @@ const Erstberatung = () => {
               Kostenfrei, unverbindlich und ohne Risiko. Wir nehmen uns Zeit für Ihre Fragen.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" variant="secondary">
+              <Button size="lg" className="bg-white text-law-blue-900 hover:bg-gray-100">
                 <Phone className="w-4 h-4 mr-2" />
                 Jetzt anrufen: +49 69 94321306
               </Button>
-              <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-law-blue-900" asChild>
+              <Button size="lg" variant="outline" className="border-2 border-white text-law-blue-900 bg-white hover:bg-gray-100 hover:text-law-blue-900" asChild>
                 <Link to="/kontakt">
                   Online Kontakt
                   <ArrowRight className="w-4 h-4 ml-2" />
