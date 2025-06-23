@@ -16,26 +16,6 @@ const supabaseUrl = "https://kwsmszwrlmfnkkfavycb.supabase.co";
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-// Helper function to convert ArrayBuffer to base64 efficiently
-function arrayBufferToBase64(buffer: ArrayBuffer): string {
-  try {
-    const bytes = new Uint8Array(buffer);
-    const chunkSize = 1024 * 1024; // Process 1MB chunks to avoid stack overflow
-    let result = '';
-    
-    for (let i = 0; i < bytes.length; i += chunkSize) {
-      const chunk = bytes.slice(i, i + chunkSize);
-      const chunkString = String.fromCharCode.apply(null, Array.from(chunk));
-      result += btoa(chunkString);
-    }
-    
-    return result;
-  } catch (error) {
-    console.error('Error converting ArrayBuffer to base64:', error);
-    throw new Error(`Base64 conversion failed: ${error.message}`);
-  }
-}
-
 const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -276,7 +256,7 @@ const handler = async (req: Request): Promise<Response> => {
             throw new Error(`PDF file too large: ${template.pdf_file_size} bytes (max: ${maxFileSize} bytes)`);
           }
 
-          // Download the PDF from Supabase Storage with timeout
+          // Download the PDF from Supabase Storage
           console.log(`⬇️ Downloading PDF from storage: ${template.pdf_file_path}`);
           const { data: pdfData, error: storageError } = await supabase.storage
             .from('email-pdfs')
@@ -291,25 +271,24 @@ const handler = async (req: Request): Promise<Response> => {
             throw new Error('PDF data is empty or null');
           }
 
-          console.log(`✅ PDF downloaded successfully, size: ${pdfData.size} bytes`);
+          console.log(`✅ PDF downloaded successfully, size: ${pdfData.size} bytes, type: ${pdfData.type}`);
 
-          // Convert blob to base64 using the improved method
+          // Convert Blob to ArrayBuffer for Resend
           const arrayBuffer = await pdfData.arrayBuffer();
-          console.log(`🔄 Converting ${arrayBuffer.byteLength} bytes to base64...`);
+          console.log(`🔄 Converting PDF to Uint8Array for Resend, size: ${arrayBuffer.byteLength} bytes`);
           
-          const base64Content = arrayBufferToBase64(arrayBuffer);
-          console.log(`✅ Base64 conversion completed, length: ${base64Content.length}`);
+          const uint8Array = new Uint8Array(arrayBuffer);
           
           emailData.attachments = [
             {
               filename: template.pdf_file_name,
-              content: base64Content,
+              content: uint8Array,
               type: 'application/pdf',
               disposition: 'attachment'
             }
           ];
           
-          console.log(`✅ PDF attachment prepared successfully: ${template.pdf_file_name}`);
+          console.log(`✅ PDF attachment prepared successfully: ${template.pdf_file_name} (${uint8Array.length} bytes)`);
 
         } catch (attachmentError: any) {
           console.error('❌ PDF attachment processing failed:', attachmentError);
