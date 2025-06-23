@@ -53,8 +53,16 @@ const Erstberatung = () => {
       
       <div className="pt-16">
         {/* Hero Section */}
-        <section className="bg-gradient-to-r from-law-blue-900 via-law-blue-800 to-law-blue-700 text-white py-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="bg-gradient-to-r from-law-blue-900 via-law-blue-800 to-law-blue-700 text-white py-20 relative">
+          {/* Background Image */}
+          <div 
+            className="absolute inset-0 bg-cover bg-center opacity-20"
+            style={{
+              backgroundImage: `url('https://i.imgur.com/niSh1Um.jpeg')`
+            }}
+          />
+          
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="text-center">
               <Badge className="mb-4 bg-law-blue-100 text-law-blue-900">Kostenlos</Badge>
               <h1 className="text-4xl md:text-6xl font-bold mb-6">
