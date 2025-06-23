@@ -1,3 +1,4 @@
+
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CTASection from '@/components/CTASection';
@@ -246,9 +247,9 @@ const Index = () => {
             <div className="order-2 lg:order-1 relative">
               <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-primary/5 rounded-2xl transform rotate-2"></div>
               <img 
-                src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                src="https://i.imgur.com/CVbAfLh.jpeg" 
                 alt="Professionelle Rechtsberatung" 
-                className="relative rounded-2xl shadow-2xl"
+                className="relative rounded-2xl shadow-2xl w-full h-full object-cover"
               />
             </div>
             
