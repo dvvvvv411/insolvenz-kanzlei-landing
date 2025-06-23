@@ -1,4 +1,3 @@
-
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CTASection from '@/components/CTASection';
@@ -190,11 +189,11 @@ const Index = () => {
               </div>
             </div>
             
-            {/* Modern stats cards */}
+            {/* Professional stats cards */}
             <div className="grid grid-cols-2 gap-6">
               <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg group">
                 <CardContent className="p-8 text-center">
-                  <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/70 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                  <div className="w-16 h-16 bg-gradient-to-br from-law-blue-700 to-law-blue-800 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                     <Shield className="w-8 h-8 text-white" />
                   </div>
                   <div className="text-3xl font-bold text-gray-900 mb-2">100%</div>
@@ -205,7 +204,7 @@ const Index = () => {
               
               <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg group">
                 <CardContent className="p-8 text-center">
-                  <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                  <div className="w-16 h-16 bg-gradient-to-br from-slate-600 to-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                     <Users className="w-8 h-8 text-white" />
                   </div>
                   <div className="text-3xl font-bold text-gray-900 mb-2">10+</div>
@@ -216,7 +215,7 @@ const Index = () => {
               
               <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg group">
                 <CardContent className="p-8 text-center">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                  <div className="w-16 h-16 bg-gradient-to-br from-gray-600 to-gray-700 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                     <MapPin className="w-8 h-8 text-white" />
                   </div>
                   <div className="text-3xl font-bold text-gray-900 mb-2">Hessen</div>
@@ -227,7 +226,7 @@ const Index = () => {
               
               <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg group">
                 <CardContent className="p-8 text-center">
-                  <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                  <div className="w-16 h-16 bg-gradient-to-br from-law-blue-600 to-law-blue-700 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                     <Clock className="w-8 h-8 text-white" />
                   </div>
                   <div className="text-3xl font-bold text-gray-900 mb-2">200+</div>
