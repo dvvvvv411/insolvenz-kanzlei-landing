@@ -1,3 +1,4 @@
+
 import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin } from 'lucide-react';
 
@@ -73,7 +74,7 @@ const Footer = () => {
         
         <div className="border-t border-gray-800 mt-8 pt-8 text-center">
           <p className="text-gray-400">
-            © 2024 Lonquich, Külper & Kollegen Rechtsanwälte PartG. Alle Rechte vorbehalten.
+            © 2025 Lonquich, Külper & Kollegen Rechtsanwälte PartG. Alle Rechte vorbehalten.
           </p>
         </div>
       </div>
