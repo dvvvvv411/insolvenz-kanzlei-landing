@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.50.0";
 import { Resend } from "npm:resend@2.0.0";
@@ -14,6 +15,78 @@ interface ProcessBotRequest {
 const supabaseUrl = "https://kwsmszwrlmfnkkfavycb.supabase.co";
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+// Helper function to convert Blob to Base64 with chunked processing
+async function blobToBase64Chunked(blob: Blob, chunkSize: number = 1024 * 1024): Promise<string> {
+  const arrayBuffer = await blob.arrayBuffer();
+  const uint8Array = new Uint8Array(arrayBuffer);
+  
+  let base64 = '';
+  for (let i = 0; i < uint8Array.length; i += chunkSize) {
+    const chunk = uint8Array.slice(i, i + chunkSize);
+    const chunkArray = Array.from(chunk);
+    const chunkString = String.fromCharCode(...chunkArray);
+    base64 += btoa(chunkString);
+  }
+  
+  return base64;
+}
+
+// Helper function to test PDF attachment with different formats
+async function preparePdfAttachment(pdfData: Blob, fileName: string) {
+  console.log(`🔄 Preparing PDF attachment: ${fileName} (${pdfData.size} bytes)`);
+  
+  // Method 1: Try Base64 encoding with chunked processing (Resend preferred)
+  try {
+    console.log('📝 Attempting Base64 encoding with chunked processing...');
+    const base64Content = await blobToBase64Chunked(pdfData, 512 * 1024); // 512KB chunks
+    
+    const attachment = {
+      filename: fileName,
+      content: base64Content,
+      type: 'application/pdf',
+      disposition: 'attachment' as const,
+      encoding: 'base64' as const
+    };
+    
+    console.log(`✅ Base64 encoding successful: ${fileName} (${base64Content.length} chars)`);
+    return { attachment, method: 'base64' };
+    
+  } catch (base64Error: any) {
+    console.warn(`⚠️ Base64 encoding failed: ${base64Error.message}`);
+    
+    // Method 2: Fallback to Uint8Array
+    try {
+      console.log('🔄 Falling back to Uint8Array conversion...');
+      const arrayBuffer = await pdfData.arrayBuffer();
+      const uint8Array = new Uint8Array(arrayBuffer);
+      
+      const attachment = {
+        filename: fileName,
+        content: uint8Array,
+        type: 'application/pdf',
+        disposition: 'attachment' as const
+      };
+      
+      console.log(`✅ Uint8Array conversion successful: ${fileName} (${uint8Array.length} bytes)`);
+      return { attachment, method: 'uint8array' };
+      
+    } catch (uint8Error: any) {
+      console.warn(`⚠️ Uint8Array conversion failed: ${uint8Error.message}`);
+      
+      // Method 3: Last resort - try direct Blob (should not work but worth testing)
+      console.log('🔄 Last resort: attempting direct Blob usage...');
+      const attachment = {
+        filename: fileName,
+        content: pdfData,
+        type: 'application/pdf',
+        disposition: 'attachment' as const
+      };
+      
+      return { attachment, method: 'blob' };
+    }
+  }
+}
 
 const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
@@ -244,6 +317,8 @@ const handler = async (req: Request): Promise<Response> => {
         html: emailContent,
       };
 
+      let attachmentMethod = 'none';
+
       // Add PDF attachment if template has one
       if (template.pdf_file_path && template.pdf_file_name) {
         console.log(`📎 Adding PDF attachment: ${template.pdf_file_name}`);
@@ -272,17 +347,13 @@ const handler = async (req: Request): Promise<Response> => {
 
           console.log(`✅ PDF downloaded successfully, size: ${pdfData.size} bytes, type: ${pdfData.type}`);
 
-          // Use the Blob directly as attachment content - this is what Resend expects
-          emailData.attachments = [
-            {
-              filename: template.pdf_file_name,
-              content: pdfData,
-              type: 'application/pdf',
-              disposition: 'attachment'
-            }
-          ];
+          // Prepare PDF attachment with multiple encoding strategies
+          const { attachment, method } = await preparePdfAttachment(pdfData, template.pdf_file_name);
+          attachmentMethod = method;
           
-          console.log(`✅ PDF attachment prepared successfully: ${template.pdf_file_name} (${pdfData.size} bytes)`);
+          emailData.attachments = [attachment];
+          
+          console.log(`✅ PDF attachment prepared successfully using ${method}: ${template.pdf_file_name}`);
 
         } catch (attachmentError: any) {
           console.error('❌ PDF attachment processing failed:', attachmentError);
@@ -304,6 +375,11 @@ const handler = async (req: Request): Promise<Response> => {
       // Send email using Resend
       const emailResponse = await resend.emails.send(emailData);
 
+      // Check for Resend API errors
+      if (emailResponse.error) {
+        throw new Error(`Resend API error: ${emailResponse.error.message}`);
+      }
+
       console.log(`✅ Email sent successfully to ${recipientEmail}:`, emailResponse);
 
       // Update bot progress
@@ -322,7 +398,8 @@ const handler = async (req: Request): Promise<Response> => {
         subject: emailSubject,
         resend_id: emailResponse.data?.id,
         progress: `${bot.emails_sent + 1}/${bot.total_recipients}`,
-        has_attachment: !!template.pdf_file_name && !!emailData.attachments
+        has_attachment: !!template.pdf_file_name && !!emailData.attachments,
+        attachment_method: attachmentMethod
       });
 
       // Calculate delay for next email based on rate limit
@@ -347,7 +424,8 @@ const handler = async (req: Request): Promise<Response> => {
         total_recipients: bot.total_recipients,
         progress: `${newEmailsSent}/${bot.total_recipients}`,
         next_email_in_seconds: newEmailsSent < bot.total_recipients ? secondsBetweenEmails : null,
-        has_attachment: !!template.pdf_file_name && !!emailData.attachments
+        has_attachment: !!template.pdf_file_name && !!emailData.attachments,
+        attachment_method: attachmentMethod
       }), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
