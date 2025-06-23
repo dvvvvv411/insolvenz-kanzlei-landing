@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -29,7 +28,7 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center">
             <img 
-              src="https://www.muenzel-boehm.de/theme/public/assets/frontend/img/muenzel-und-boehm-rechtsanwaelte-insolvenzrecht.svg" 
+              src="https://i.imgur.com/7TEsXpP.png" 
               alt="Kanzlei Logo" 
               className="h-12 w-auto"
             />

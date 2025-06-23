@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin } from 'lucide-react';
 
@@ -9,9 +8,9 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-2">
             <img 
-              src="https://www.muenzel-boehm.de/theme/public/assets/frontend/img/muenzel-und-boehm-rechtsanwaelte-insolvenzrecht.svg" 
+              src="https://i.imgur.com/7TEsXpP.png" 
               alt="Kanzlei Logo" 
-              className="h-12 w-auto mb-4 filter invert"
+              className="h-12 w-auto mb-4"
             />
             <h3 className="text-lg font-semibold mb-4">
               Lonquich, Külper & Kollegen Rechtsanwälte PartG
